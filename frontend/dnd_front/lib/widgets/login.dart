@@ -17,7 +17,8 @@ class LoginScreen extends StatelessWidget {
                 'Enter the user id (will be replaced by 0auth2 later...)',
           ),
           onFieldSubmitted: (String value) {
-            Navigator.pushNamed(context, "/norms_editor/");
+            Navigator.pushNamed(context, "/norms_editor/",
+                arguments: {"user": value});
           },
         ),
       ),
