@@ -23,3 +23,6 @@ copy-front-to-back:
     cp -rv {{ dnd_front }}/web/* {{ dnd_back }}/static/
 
 build: build-front copy-front-to-back build-back
+
+run:
+    {{ dnd_back }}/target/release/dnd_back
