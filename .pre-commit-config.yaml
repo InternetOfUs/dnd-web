@@ -27,7 +27,7 @@ repos:
         files: frontend/dnd_front/lib/* # Only format source files
 
 -   repo: https://github.com/doublify/pre-commit-rust
-    rev: master
+    rev: eeee35a89e69d5772bdee97db1a6a898467b686e
     hooks:
     -   id: fmt
         entry: cargo fmt --manifest-path backend/dnd_back/Cargo.toml
