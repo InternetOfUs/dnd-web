@@ -18,3 +18,6 @@ build-front:
 
 build-back:
     just cargo "build --release"
+
+copy-front-to-back:
+    cp -rv {{ dnd_front }}/web/* {{ dnd_back }}/static/
