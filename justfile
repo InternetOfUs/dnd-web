@@ -15,3 +15,6 @@ cargo CMD:
 
 build-front:
     just flutter "build web"
+
+build-back:
+    just cargo "build --release"
