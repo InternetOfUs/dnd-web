@@ -9,3 +9,6 @@ run-back:
 
 flutter CMD:
     cd {{ dnd_front }} && flutter {{ CMD }}
+
+cargo CMD:
+    cd {{ dnd_back }} && cargo {{ CMD }}
