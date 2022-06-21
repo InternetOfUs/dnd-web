@@ -10,9 +10,19 @@ This project use [Just](https://github.com/casey/just) (a better makefile)
 
 A bunch of pre-commits are used in this project. Please install [pre-commit](https://pre-commit.com/) then install them `pre-commit install` and `pre-commit install --hook-type commit-msg`.
 
-## Debug the front-end
+## Build
 
-`just run-front` then connect to <http://localhost:8888>
+```bash
+just build
+```
+
+## Run
+
+```bash
+just run
+```
+
+Then connect to <http://localhost:8888>
 
 ## Misc - Available recipes
 
