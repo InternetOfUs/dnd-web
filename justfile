@@ -12,3 +12,6 @@ flutter CMD:
 
 cargo CMD:
     cd {{ dnd_back }} && cargo {{ CMD }}
+
+build-front:
+    just flutter "build web"
