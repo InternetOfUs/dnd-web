@@ -14,7 +14,7 @@ cargo CMD:
     cd {{ dnd_back }} && cargo {{ CMD }}
 
 build-front:
-    just flutter "build web"
+    just flutter "build web --release"
 
 build-back:
     just cargo "build --release"
