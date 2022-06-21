@@ -16,7 +16,7 @@ A bunch of pre-commits are used in this project. Please install [pre-commit](htt
 
 ## Misc - Available recipes
 
-```
+```bash
     build              # Build all
     build-back         # build the backend
     build-front        # build the frontend
