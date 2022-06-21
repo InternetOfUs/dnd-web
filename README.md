@@ -6,6 +6,12 @@ DnD WeNet web "app".
 
 This project use [Just](https://github.com/casey/just) (a better makefile)
 
+**Dependencies**
+
+  - cargo 1.61
+  - flutter >= 3, < 4
+  - just 1.2.0
+
 ### pre-commits
 
 A bunch of pre-commits are used in this project. Please install [pre-commit](https://pre-commit.com/) then install them `pre-commit install` and `pre-commit install --hook-type commit-msg`.
