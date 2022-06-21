@@ -17,6 +17,13 @@ A bunch of pre-commits are used in this project. Please install [pre-commit](htt
 ## Misc - Available recipes
 
 ```
-    flutter CMD
-    run-front
+    build              # Build all
+    build-back         # build the backend
+    build-front        # build the frontend
+    cargo CMD          # run given cargo CMD for the backend
+    copy-front-to-back # copy builded frontend into the backend
+    flutter CMD        # run given flutter CMD for the frontend
+    run                # Run the app
+    run-back           # run only the backend
+    run-front          # run only the frontend
 ```
