@@ -25,3 +25,11 @@ repos:
     hooks:
     -   id: flutter-format
         files: frontend/dnd_front/lib/* # Only format source files
+
+-   repo: https://github.com/doublify/pre-commit-rust
+    rev: master
+    hooks:
+    -   id: fmt
+        entry: cargo fmt --manifest-path backend/dnd_back/Cargo.toml
+    -   id: cargo-check
+        entry: cargo check --manifest-path backend/dnd_back/Cargo.toml
