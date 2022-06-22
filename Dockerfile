@@ -16,7 +16,7 @@ COPY --chown=rust:rust backend /build/backend/
 WORKDIR /build/backend/dnd_back/
 
 RUN mkdir -p static
-COPY --from=build_front /build/frontend/dnd_front/web/* /build/backend/dnd_back/static/
+COPY --from=build_front /build/frontend/dnd_front/build/web/* /build/backend/dnd_back/static/
 
 RUN cargo clean
 RUN cargo build --release

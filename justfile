@@ -28,7 +28,7 @@ build-back:
 # copy builded frontend into the backend
 copy-front-to-back:
     mkdir -p {{ dnd_back }}/static
-    cp -rv {{ dnd_front }}/web/* {{ dnd_back }}/static/
+    cp -rv {{ dnd_front }}/build/web/* {{ dnd_back }}/static/
 
 # Build all
 build: build-front copy-front-to-back build-back
