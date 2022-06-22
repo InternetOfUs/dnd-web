@@ -35,4 +35,4 @@ build: build-front copy-front-to-back build-back
 
 # Run the app
 run:
-    {{ dnd_back }}/target/release/dnd_back
+    cd {{ dnd_back }} && target/release/dnd_back
