@@ -15,15 +15,13 @@ COPY --chown=rust:rust backend /build/backend/
 
 WORKDIR /build/backend/dnd_back/
 
-RUN mkdir -p static
-COPY --from=build_front /build/frontend/dnd_front/build/web/* /build/backend/dnd_back/static/
-
 RUN cargo clean
 RUN cargo build --release
 
 FROM scratch
 
 COPY --from=build_back /build/backend/dnd_back/target/x86_64-unknown-linux-musl/release/dnd_back /app/
+COPY --from=build_front /build/frontend/dnd_front/build/web /app/static
 WORKDIR /app
 EXPOSE 8888
 CMD ["/app/dnd_back"]
