@@ -1,0 +1,37 @@
+image: tiangolo/docker-with-compose
+stages:
+  - check_docker_exist
+  - build_image
+  - push
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
+
+check_docker_exist:
+  tags:
+    - docker
+    - linux
+  stage: check_docker_exist
+  script:
+    - docker info
+
+build_image:
+  tags:
+    - docker
+    - linux
+  stage: build_image
+  script:
+    - docker build . -t docker.idiap.ch/wenet/dnd-web
+
+push:
+  tags:
+    - docker
+    - linux
+  stage: push
+  only:
+    - master
+  script:
+    - echo $CI_JOB_TOKEN | docker login docker.idiap.ch -u gitlab-ci-token --password-stdin
+    - docker push docker.idiap.ch/wenet/dnd-web:latest
