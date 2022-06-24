@@ -8,30 +8,18 @@ class DnDView extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Counter')),
+      appBar: AppBar(title: const Text('DnD App')),
       body: Center(
-        child: BlocBuilder<DnDCubit, int>(
-          builder: (context, state) {
-            return Text('$state', style: textTheme.headline2);
+        child: TextFormField(
+          decoration: const InputDecoration(
+            border: UnderlineInputBorder(),
+            labelText:
+                'Enter the user id (will be replaced by 0auth2 later...)',
+          ),
+          onFieldSubmitted: (String value) {
+            context.read<DnDCubit>().setUser(value);
           },
         ),
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: <Widget>[
-          FloatingActionButton(
-            key: const Key('counterView_increment_floatingActionButton'),
-            child: const Icon(Icons.add),
-            onPressed: () => context.read<DnDCubit>().increment(),
-          ),
-          const SizedBox(height: 8),
-          FloatingActionButton(
-            key: const Key('counterView_decrement_floatingActionButton'),
-            child: const Icon(Icons.remove),
-            onPressed: () => context.read<DnDCubit>().decrement(),
-          ),
-        ],
       ),
     );
   }
