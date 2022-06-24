@@ -1,12 +1,28 @@
-import 'package:bloc/bloc.dart';
-import 'package:flutter/widgets.dart';
+// Copyright 2018 The Flutter team. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
-import 'app.dart';
-import 'dnd_observer.dart';
+import 'package:flutter/material.dart';
 
 void main() {
-  BlocOverrides.runZoned(
-    () => runApp(const DnDApp()),
-    blocObserver: DnDObserver(),
-  );
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Welcome to Flutter',
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Welcome to Flutter'),
+        ),
+        body: const Center(
+          child: Text('Hello World'),
+        ),
+      ),
+    );
+  }
 }
