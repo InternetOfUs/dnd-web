@@ -11,7 +11,15 @@ MaterialApp getRoutes() {
     routes: {
       // When navigating to the "/" route, build the FirstScreen widget.
       '/': (context) => const LoginScreen(),
-      '/norms_editor/': (context) => const NormsEditor()
+      '/norms_editor/': (context) => NormsEditor("0")
+    },
+    onGenerateRoute: (RouteSettings settings) {
+      var routes = <String, WidgetBuilder>{
+        "/": (ctx) => const LoginScreen(),
+        "/norms_editor/": (ctx) => NormsEditor(settings.arguments as String),
+      };
+      WidgetBuilder? builder = routes[settings.arguments as String];
+      return MaterialPageRoute(builder: (ctx) => builder!(ctx));
     },
   );
 }
