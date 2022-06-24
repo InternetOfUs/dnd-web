@@ -11,6 +11,7 @@ class LoginView extends StatelessWidget {
       appBar: AppBar(title: const Text('DnD App')),
       body: Center(
         child: TextFormField(
+          style: textTheme.headline2,
           decoration: const InputDecoration(
             border: UnderlineInputBorder(),
             labelText:
