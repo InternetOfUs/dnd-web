@@ -19,6 +19,17 @@ class LoginView extends StatelessWidget {
           ),
           onFieldSubmitted: (String value) {
             context.read<DnDCubit>().setUser(value);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return BlocProvider.value(
+                    value: BlocProvider.of<DnDCubit>(context),
+                    child: RoutineView(),
+                  );
+                },
+              ),
+            );
           },
         ),
       ),
