@@ -1,7 +1,12 @@
-import 'package:dnd_front/widgets/login.dart';
-import 'package:flutter/material.dart';
-import 'routes/all_routes.dart';
+import 'package:bloc/bloc.dart';
+import 'package:flutter/widgets.dart';
+
+import 'app.dart';
+import 'dnd_observer.dart';
 
 void main() {
-  runApp(getRoutes());
+  BlocOverrides.runZoned(
+    () => runApp(const DnDApp()),
+    blocObserver: DnDObserver(),
+  );
 }
