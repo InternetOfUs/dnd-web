@@ -1,15 +1,8 @@
 import 'package:bloc/bloc.dart';
 
-/// {@template counter_cubit}
-/// A [Cubit] which manages an [int] as its state.
-/// {@endtemplate}
-class DnDCubit extends Cubit<int> {
+class DnDCubit extends Cubit<String> {
   /// {@macro counter_cubit}
-  DnDCubit() : super(0);
+  DnDCubit() : super("");
 
-  /// Add 1 to the current state.
-  void increment() => emit(state + 1);
-
-  /// Subtract 1 from the current state.
-  void decrement() => emit(state - 1);
+  void setUser(String user) => emit(user);
 }
