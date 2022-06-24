@@ -1,9 +1,5 @@
 import 'package:bloc/bloc.dart';
 
-/// {@template counter_observer}
-/// [BlocObserver] for the counter application which
-/// observes all state changes.
-/// {@endtemplate}
 class DnDObserver extends BlocObserver {
   @override
   void onChange(BlocBase bloc, Change change) {
