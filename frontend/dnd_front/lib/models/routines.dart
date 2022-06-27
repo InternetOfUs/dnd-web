@@ -54,7 +54,7 @@ class Routine {
     }
   }
 
-  String get weekdayStr => "$_weekday";
+  String get weekdayStr => toWeekday().name;
 
   Routine(this._weekday, this._time_from, this._time_to, this.label);
 }
