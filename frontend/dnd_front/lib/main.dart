@@ -12,8 +12,9 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        Provider<LoginModel>(create: (context) => LoginModel()),
-        Provider<RoutinesModel>(create: (context) => RoutinesModel())
+        ChangeNotifierProvider<LoginModel>(create: (context) => LoginModel()),
+        ChangeNotifierProvider<RoutinesModel>(
+            create: (context) => RoutinesModel())
       ],
       child: MyApp(),
     ),
