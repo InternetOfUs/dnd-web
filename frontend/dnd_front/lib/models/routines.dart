@@ -15,7 +15,7 @@ class Routine {
   final int _weekday;
   final String _timeFrom;
   final String _timeTo;
-  final String? label;
+  final String? _label;
 
   Weekday toWeekday() {
     switch (_weekday) {
@@ -56,7 +56,7 @@ class Routine {
 
   String get weekdayStr => toWeekday().name;
 
-  Routine(this._weekday, this._timeFrom, this._timeTo, this.label);
+  Routine(this._weekday, this._timeFrom, this._timeTo, this._label);
 }
 
 class RoutinesModel extends ChangeNotifier {
