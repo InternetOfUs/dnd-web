@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:dnd_front/models/routines.dart';
 import 'package:dnd_front/routines.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,8 +10,11 @@ import 'models/login.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => LoginModel(),
+    MultiProvider(
+      providers: [
+        Provider<LoginModel>(create: (context) => LoginModel()),
+        Provider<RoutinesModel>(create: (context) => RoutinesModel())
+      ],
       child: MyApp(),
     ),
   );
