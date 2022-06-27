@@ -6,6 +6,10 @@ import 'package:provider/provider.dart';
 class RoutinePage extends StatelessWidget {
   const RoutinePage({Key? key}) : super(key: key);
 
+  Widget buildRoutine(BuildContext context, Routine routine) {
+    return ListTile(title: Text(routine.weekdayStr));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +24,7 @@ class RoutinePage extends StatelessWidget {
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       final item = routinesModels.routines[index];
-                      return ListTile(title: Text(item.weekdayStr));
+                      return buildRoutine(context, item);
                     },
                   ))
         ]));
