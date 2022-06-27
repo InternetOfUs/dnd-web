@@ -6,6 +6,8 @@ class Routine {
   final String _time_to;
   final String? label;
 
+  String get weekdayStr => "$_weekday";
+
   Routine(this._weekday, this._time_from, this._time_to, this.label);
 }
 
