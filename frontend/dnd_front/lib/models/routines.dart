@@ -1,10 +1,58 @@
 import 'package:flutter/foundation.dart';
 
+enum Weekday {
+  monday,
+  tuesday,
+  wednesday,
+  thursday,
+  friday,
+  saturday,
+  sunday,
+  error
+}
+
 class Routine {
   final int _weekday;
   final String _time_from;
   final String _time_to;
   final String? label;
+
+  Weekday toWeekday() {
+    switch (_weekday) {
+      case 1:
+        {
+          return Weekday.monday;
+        }
+      case 2:
+        {
+          return Weekday.tuesday;
+        }
+      case 3:
+        {
+          return Weekday.wednesday;
+        }
+      case 4:
+        {
+          return Weekday.thursday;
+        }
+      case 5:
+        {
+          return Weekday.friday;
+        }
+      case 6:
+        {
+          return Weekday.saturday;
+        }
+      case 7:
+        {
+          return Weekday.sunday;
+        }
+      default:
+        {
+          return Weekday.error;
+        }
+    }
+  }
 
   String get weekdayStr => "$_weekday";
 
