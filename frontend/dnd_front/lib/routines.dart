@@ -2,14 +2,9 @@ import 'package:dnd_front/models/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class RoutinePage extends StatefulWidget {
-  RoutinePage({Key? key}) : super(key: key);
+class RoutinePage extends StatelessWidget {
+  const RoutinePage({Key? key}) : super(key: key);
 
-  @override
-  State<RoutinePage> createState() => _RoutinePageState();
-}
-
-class _RoutinePageState extends State<RoutinePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
