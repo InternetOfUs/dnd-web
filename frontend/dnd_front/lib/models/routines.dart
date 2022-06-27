@@ -13,8 +13,8 @@ enum Weekday {
 
 class Routine {
   final int _weekday;
-  final String _time_from;
-  final String _time_to;
+  final String _timeFrom;
+  final String _timeTo;
   final String? label;
 
   Weekday toWeekday() {
@@ -56,7 +56,7 @@ class Routine {
 
   String get weekdayStr => toWeekday().name;
 
-  Routine(this._weekday, this._time_from, this._time_to, this.label);
+  Routine(this._weekday, this._timeFrom, this._timeTo, this.label);
 }
 
 class RoutinesModel extends ChangeNotifier {
