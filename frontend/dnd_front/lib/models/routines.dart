@@ -17,6 +17,10 @@ class Routine {
   final String _timeTo;
   final String? _label;
 
+  String get timeFrom => _timeFrom;
+  String get timeTo => _timeTo;
+  String get label => _label ?? "";
+
   Weekday toWeekday() {
     switch (_weekday) {
       case 1:
