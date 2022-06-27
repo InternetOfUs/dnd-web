@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'globals.dart' as globals;
 
 class RoutinePage extends StatefulWidget {
   RoutinePage({Key? key}) : super(key: key);

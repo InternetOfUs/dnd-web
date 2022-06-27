@@ -4,7 +4,6 @@
 
 import 'package:dnd_front/routines.dart';
 import 'package:flutter/material.dart';
-import 'globals.dart' as globals;
 
 void main() {
   runApp(MyApp());
