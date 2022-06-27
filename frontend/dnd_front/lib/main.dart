@@ -4,9 +4,16 @@
 
 import 'package:dnd_front/routines.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'models/login.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => LoginModel(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -31,8 +38,7 @@ class MyHome extends StatelessWidget {
                 'Enter the user id (will be replaced by 0auth2 later...)',
           ),
           onFieldSubmitted: (String value) {
-            //context.read<DnDCubit>().setUser(value);
-            globals.user = value;
+            context.read<LoginModel>().login = value;
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => RoutinePage()),
