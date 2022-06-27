@@ -30,6 +30,7 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.0
+  datetime_picker_formfield: ^2.0.0
 
 
 
