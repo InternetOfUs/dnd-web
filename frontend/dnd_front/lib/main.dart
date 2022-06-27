@@ -43,6 +43,7 @@ class MyHome extends StatelessWidget {
           ),
           onFieldSubmitted: (String value) {
             context.read<LoginModel>().login = value;
+            context.read<RoutinesModel>().fillFromProfileManager(value);
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => RoutinePage()),
