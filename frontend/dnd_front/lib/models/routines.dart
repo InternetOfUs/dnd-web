@@ -91,6 +91,11 @@ class RoutinesModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeAt(int index) {
+    _routines.removeAt(index);
+    notifyListeners();
+  }
+
   Future<void> fillFromProfileManager(login) async {
     _routines.clear();
     for (var i = 1; i < 8; i++) {
