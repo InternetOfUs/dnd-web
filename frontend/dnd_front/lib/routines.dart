@@ -34,7 +34,8 @@ class RoutinePage extends StatelessWidget {
         ),
         OutlinedButton(
           onPressed: () {
-            debugPrint('Received click');
+            Routine newRoutine = Routine(routine.weekeday, "", "", "");
+            routinesModels.addAt(newRoutine, index);
           },
           child: const Text('add time slot'),
         ),
