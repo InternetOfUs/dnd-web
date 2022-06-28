@@ -91,10 +91,10 @@ class RoutinesModel extends ChangeNotifier {
     var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
     _labels.clear();
     _labels.add("");
+    _labels.add("prefer not to share");
     for (var k in decodedResponse.keys) {
       _labels.add(k);
     }
-    _labels.add("prefer not to share");
     notifyListeners();
   }
 }
