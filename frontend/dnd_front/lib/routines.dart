@@ -67,7 +67,13 @@ class RoutinePage extends StatelessWidget {
                       final item = routinesModels.routines[index];
                       return buildRoutine(context, item);
                     },
-                  ))
+                  )),
+          const Align(
+              alignment: Alignment.centerRight, child: SizedBox(height: 50)),
+          ElevatedButton(
+            onPressed: () {},
+            child: const Text('Save'),
+          ),
         ]));
   }
 }
