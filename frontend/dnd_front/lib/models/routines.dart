@@ -95,7 +95,7 @@ class RoutinesModel extends ChangeNotifier {
     for (var name in Weekday.values) {
       res.add(name.toString().split('.').elementAt(1));
     }
-    return res;
+    return res.sublist(0, res.length - 1);
   }
 
   void add(Routine routine) {
