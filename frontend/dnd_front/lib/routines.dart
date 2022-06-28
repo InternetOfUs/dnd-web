@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 class RoutinePage extends StatelessWidget {
   const RoutinePage({Key? key}) : super(key: key);
 
-  Widget buildRoutine(BuildContext context, Routine routine) {
+  Widget buildRoutine(BuildContext context, Routine routine, int index) {
     return Row(
       children: [
         SizedBox(width: 90.0, child: Text(routine.weekdayStr)),
@@ -65,7 +65,7 @@ class RoutinePage extends StatelessWidget {
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       final item = routinesModels.routines[index];
-                      return buildRoutine(context, item);
+                      return buildRoutine(context, item, index);
                     },
                   )),
           const Align(
