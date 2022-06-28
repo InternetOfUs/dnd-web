@@ -65,25 +65,32 @@ class RoutinePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text('Routines')),
-        body: Column(children: [
-          Consumer<LoginModel>(
-              builder: (context, loginModel, child) => Text(loginModel.login)),
-          Consumer<RoutinesModel>(
-              builder: (context, routinesModels, child) => ListView.builder(
-                    itemCount: routinesModels.routines.length,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      final item = routinesModels.routines[index];
-                      return buildRoutine(context, item, index, routinesModels);
-                    },
-                  )),
-          const Align(
-              alignment: Alignment.centerRight, child: SizedBox(height: 50)),
-          ElevatedButton(
-            onPressed: () {},
-            child: const Text('Save'),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(children: [
+              Consumer<LoginModel>(
+                  builder: (context, loginModel, child) =>
+                      Text(loginModel.login)),
+              Consumer<RoutinesModel>(
+                  builder: (context, routinesModels, child) => ListView.builder(
+                        itemCount: routinesModels.routines.length,
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          final item = routinesModels.routines[index];
+                          return buildRoutine(
+                              context, item, index, routinesModels);
+                        },
+                      )),
+              const Align(
+                  alignment: Alignment.centerRight,
+                  child: SizedBox(height: 50)),
+              ElevatedButton(
+                onPressed: () {},
+                child: const Text('Save'),
+              ),
+            ]),
           ),
-        ]));
+        ));
   }
 }
