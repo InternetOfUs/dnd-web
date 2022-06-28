@@ -11,7 +11,24 @@ class RoutinePage extends StatelessWidget {
       RoutinesModel routinesModels) {
     return Row(
       children: [
-        SizedBox(width: 90.0, child: Text(routine.weekdayStr)),
+        DropdownButton<String>(
+          icon: const Icon(Icons.calendar_today),
+          elevation: 16,
+          style: const TextStyle(color: Colors.deepPurple),
+          underline: Container(
+            height: 2,
+            color: Colors.black,
+          ),
+          onChanged: (String? newValue) {},
+          value: routine.weekdayStr,
+          items: routinesModels.weekdays
+              .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
         const SizedBox(width: 60.0, child: Text("From: ")),
         const SizedBox(
           width: 100.0,
