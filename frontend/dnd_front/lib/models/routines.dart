@@ -73,6 +73,14 @@ class RoutinesModel extends ChangeNotifier {
 
   List<Routine> get routines => List<Routine>.from(_routines);
   List<String> get labels => List<String>.from(_labels);
+  List<String> get weekdays {
+    List<String> res = [];
+    for (var name in Weekday.values) {
+      res.add(name.toString().split('.').elementAt(1));
+    }
+    return res;
+  }
+
   void add(Routine routine) {
     _routines.add(routine);
     notifyListeners();
