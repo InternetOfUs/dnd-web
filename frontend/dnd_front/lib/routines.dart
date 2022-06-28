@@ -74,6 +74,11 @@ class RoutinePage extends StatelessWidget {
             );
           }).toList(),
         ),
+        IconButton(
+            onPressed: () {
+              routinesModels.removeAt(index);
+            },
+            icon: const Icon(Icons.cancel_outlined, color: Colors.red)),
       ],
     );
   }
