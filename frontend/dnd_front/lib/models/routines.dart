@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -85,12 +87,14 @@ class RoutinesModel extends ChangeNotifier {
   }
 
   Future<void> retreiveLabels() async {
-    //  final response = await http.get(Uri.parse('wenet_regions_mapping.json'));
+    final response = await http.get(Uri.parse('wenet_regions_mapping.json'));
+    var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
     _labels.clear();
     _labels.add("");
-    _labels.add("One");
-    _labels.add("Two");
-    _labels.add("Three");
+    for (var k in decodedResponse.keys) {
+      _labels.add(k);
+    }
+    _labels.add("I don't want to say");
     notifyListeners();
   }
 }
