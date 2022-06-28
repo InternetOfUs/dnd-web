@@ -24,9 +24,5 @@
   "University - Library": 12,
   "University - Other": 13,
   "Work - Canteen, Cafetaria": 16,
-  "Work - Workplace, Office": 15,
-  "no_data": 0,
-  "unknown": 1,
-  "unknown_labelled_region": 3,
-  "unknown_region": 2
+  "Work - Workplace, Office": 15
 }
