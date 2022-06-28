@@ -15,15 +15,32 @@ enum Weekday {
 }
 
 class Routine {
-  final int _weekday;
-  final String _timeFrom;
-  final String _timeTo;
-  final String? _label;
+  int _weekday;
+  String _timeFrom;
+  String _timeTo;
+  String? _label;
 
   int get weekeday => _weekday;
   String get timeFrom => _timeFrom;
   String get timeTo => _timeTo;
   String get label => _label ?? "";
+  set label(String newLabel) {
+    _label = newLabel;
+  }
+
+  int fromWeekday(String w) {
+    int res = -1;
+    Weekday.values.asMap().forEach((index, value) {
+      String valueStr = value.toString().split(".").elementAt(1);
+      if (valueStr == w) {
+        res = index + 1;
+      }
+    });
+    if (res > 0) {
+      _weekday = res;
+    }
+    return res;
+  }
 
   Weekday toWeekday() {
     switch (_weekday) {
