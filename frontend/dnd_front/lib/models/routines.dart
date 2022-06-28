@@ -133,4 +133,8 @@ class RoutinesModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void update() {
+    notifyListeners();
+  }
 }
