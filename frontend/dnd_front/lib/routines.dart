@@ -19,7 +19,10 @@ class RoutinePage extends StatelessWidget {
             height: 2,
             color: Colors.black,
           ),
-          onChanged: (String? newValue) {},
+          onChanged: (String? newValue) {
+            routine.fromWeekday(newValue!);
+            routinesModels.update();
+          },
           value: routine.weekdayStr,
           items: routinesModels.weekdays
               .map<DropdownMenuItem<String>>((String value) {
