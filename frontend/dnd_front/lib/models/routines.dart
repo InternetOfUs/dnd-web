@@ -20,6 +20,7 @@ class Routine {
   final String _timeTo;
   final String? _label;
 
+  int get weekeday => _weekday;
   String get timeFrom => _timeFrom;
   String get timeTo => _timeTo;
   String get label => _label ?? "";
@@ -74,6 +75,11 @@ class RoutinesModel extends ChangeNotifier {
   List<String> get labels => List<String>.from(_labels);
   void add(Routine routine) {
     _routines.add(routine);
+    notifyListeners();
+  }
+
+  void addAt(Routine routine, int at) {
+    _routines.insert(at, routine);
     notifyListeners();
   }
 
