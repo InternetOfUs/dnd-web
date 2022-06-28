@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
 enum Weekday {
   monday,
@@ -65,9 +66,10 @@ class Routine {
 
 class RoutinesModel extends ChangeNotifier {
   final List<Routine> _routines = [];
+  final List<String> _labels = [];
 
   List<Routine> get routines => List<Routine>.from(_routines);
-
+  List<String> get labels => List<String>.from(_labels);
   void add(Routine routine) {
     _routines.add(routine);
     notifyListeners();
@@ -79,6 +81,16 @@ class RoutinesModel extends ChangeNotifier {
       Routine routine = Routine(i, "", "", "");
       _routines.add(routine);
     }
+    retreiveLabels();
+  }
+
+  Future<void> retreiveLabels() async {
+    //  final response = await http.get(Uri.parse('wenet_regions_mapping.json'));
+    _labels.clear();
+    _labels.add("");
+    _labels.add("One");
+    _labels.add("Two");
+    _labels.add("Three");
     notifyListeners();
   }
 }
