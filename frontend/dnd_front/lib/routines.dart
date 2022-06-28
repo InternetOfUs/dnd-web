@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 class RoutinePage extends StatelessWidget {
   const RoutinePage({Key? key}) : super(key: key);
 
-  Widget buildRoutine(BuildContext context, Routine routine, int index) {
+  Widget buildRoutine(BuildContext context, Routine routine, int index,
+      RoutinesModel routinesModels) {
     return Row(
       children: [
         SizedBox(width: 90.0, child: Text(routine.weekdayStr)),
@@ -47,7 +48,7 @@ class RoutinePage extends StatelessWidget {
           ),
           onChanged: (String? newValue) {},
           hint: const Text("Where are you usually at this time?"),
-          items: <String>['', 'One', 'Two', 'Free', 'Four']
+          items: routinesModels.labels
               .map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
@@ -73,7 +74,7 @@ class RoutinePage extends StatelessWidget {
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       final item = routinesModels.routines[index];
-                      return buildRoutine(context, item, index);
+                      return buildRoutine(context, item, index, routinesModels);
                     },
                   )),
           const Align(
