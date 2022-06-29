@@ -28,6 +28,14 @@ class Routine {
     _label = newLabel;
   }
 
+  set timeFrom(String time) {
+    _timeFrom = time;
+  }
+
+  set timeTo(String time) {
+    _timeTo = time;
+  }
+
   int fromWeekday(String w) {
     int res = -1;
     Weekday.values.asMap().forEach((index, value) {
