@@ -93,7 +93,11 @@ class RoutinePage extends StatelessWidget {
             height: 2,
             color: Colors.deepPurpleAccent,
           ),
-          onChanged: (String? newValue) {},
+          onChanged: (String? newValue) {
+            routine.label = newValue!;
+            routinesModels.update();
+          },
+          value: routine.label == "" ? null : routine.label,
           hint: const Text("Where are you usually at this time?"),
           items: routinesModels.labels
               .map<DropdownMenuItem<String>>((String value) {
