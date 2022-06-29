@@ -9,6 +9,10 @@ class RoutinePage extends StatelessWidget {
 
   Widget buildRoutine(BuildContext context, Routine routine, int index,
       RoutinesModel routinesModels) {
+    var txtFrom = TextEditingController();
+    var txtTo = TextEditingController();
+    txtFrom.text = routine.timeFrom;
+    txtTo.text = routine.timeTo;
     return Row(
       children: [
         DropdownButton<String>(
@@ -33,20 +37,42 @@ class RoutinePage extends StatelessWidget {
           }).toList(),
         ),
         const SizedBox(width: 60.0, child: Text("From: ")),
-        const SizedBox(
+        SizedBox(
           width: 100.0,
           child: TextField(
-            decoration: InputDecoration(
+            controller: txtFrom,
+            onTap: () async {
+              final newTime = await showTimePicker(
+                context: context,
+                initialTime: const TimeOfDay(hour: 7, minute: 15),
+              );
+              if (newTime != null) {
+                routine.timeFrom = newTime.format(context);
+                routinesModels.update();
+              }
+            },
+            decoration: const InputDecoration(
               border: OutlineInputBorder(),
               hintText: '0.00am',
             ),
           ),
         ),
         const SizedBox(width: 30.0, child: Text("To: ")),
-        const SizedBox(
+        SizedBox(
           width: 100.0,
           child: TextField(
-            decoration: InputDecoration(
+            controller: txtTo,
+            onTap: () async {
+              final newTime = await showTimePicker(
+                context: context,
+                initialTime: const TimeOfDay(hour: 9, minute: 15),
+              );
+              if (newTime != null) {
+                routine.timeTo = newTime.format(context);
+                routinesModels.update();
+              }
+            },
+            decoration: const InputDecoration(
               border: OutlineInputBorder(),
               hintText: '0.00am',
             ),
