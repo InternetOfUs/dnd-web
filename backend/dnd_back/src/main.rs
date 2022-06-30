@@ -1,5 +1,10 @@
 use actix_files as fs;
-use actix_web::{middleware::Logger, App, HttpServer};
+use actix_web::{middleware::Logger, post, App, HttpResponse, HttpServer, Responder};
+
+#[post("/add_norms")]
+async fn echo(req_body: String) -> impl Responder {
+    HttpResponse::Ok().body(req_body)
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
