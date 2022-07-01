@@ -52,7 +52,7 @@ impl fmt::Display for Norm {
 }
 
 #[post("/add_routine")]
-async fn echo(routine: web::Json<Routine>) -> impl Responder {
+async fn add_routine(routine: web::Json<Routine>) -> impl Responder {
     println!("received {}", routine);
     HttpResponse::Ok().body(routine.to_string())
 }
@@ -61,11 +61,14 @@ async fn echo(routine: web::Json<Routine>) -> impl Responder {
 async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     HttpServer::new(|| {
-        App::new().wrap(Logger::new("%a %{User-Agent}i")).service(
-            fs::Files::new("/", "./static")
-                .index_file("index.html")
-                .use_last_modified(true),
-        )
+        App::new()
+            .wrap(Logger::new("%a %{User-Agent}i"))
+            .service(add_routine)
+            .service(
+                fs::Files::new("/", "./static")
+                    .index_file("index.html")
+                    .use_last_modified(true),
+            )
     })
     .bind(("0.0.0.0", 8888))?
     .run()
