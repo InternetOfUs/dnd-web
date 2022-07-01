@@ -112,6 +112,14 @@ class RoutinePage extends StatelessWidget {
               routinesModels.removeAt(index);
             },
             icon: const Icon(Icons.cancel_outlined, color: Colors.red)),
+        IconButton(
+            onPressed: !routine.isValid()
+                ? null
+                : () {
+                    // TODO send routine
+                  },
+            icon: Icon(Icons.cloud_upload_rounded,
+                color: routine.isValid() ? Colors.green : Colors.grey)),
       ],
     );
   }
