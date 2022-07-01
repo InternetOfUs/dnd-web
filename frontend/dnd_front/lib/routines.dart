@@ -7,6 +7,34 @@ import 'package:provider/provider.dart';
 class RoutinePage extends StatelessWidget {
   const RoutinePage({Key? key}) : super(key: key);
 
+  Icon buildIcon(BuildContext context, Routine routine) {
+    var color = Colors.green;
+    var icon = Icons.cloud_upload_rounded;
+    switch (routine.routineStatus) {
+      case RoutineStatus.routineDownloaded:
+        color = Colors.blue;
+        icon = Icons.cloud_download_rounded;
+        break;
+      case RoutineStatus.routineError:
+        color = Colors.red;
+        icon = Icons.cloud_off_outlined;
+        break;
+      case RoutineStatus.routineNew:
+        color = Colors.green;
+        icon = Icons.cloud_upload_rounded;
+        break;
+      case RoutineStatus.routineSending:
+        color = Colors.deepPurple;
+        icon = Icons.send;
+        break;
+      case RoutineStatus.routineUploaded:
+        color = Colors.green;
+        icon = Icons.check;
+        break;
+    }
+    return Icon(icon, color: color);
+  }
+
   Widget buildRoutine(BuildContext context, Routine routine, int index,
       RoutinesModel routinesModels) {
     var txtFrom = TextEditingController();
@@ -116,10 +144,9 @@ class RoutinePage extends StatelessWidget {
             onPressed: !routine.isValid()
                 ? null
                 : () {
-                    // TODO send routine
+                    routinesModels.sendRoutine(routine);
                   },
-            icon: Icon(Icons.cloud_upload_rounded,
-                color: routine.isValid() ? Colors.green : Colors.grey)),
+            icon: buildIcon(context, routine)),
       ],
     );
   }
