@@ -90,6 +90,13 @@ class Routine {
   String get weekdayStr => toWeekday().name;
 
   Routine(this._weekday, this._timeFrom, this._timeTo, this._label);
+
+  Map<String, dynamic> toJson() => {
+        "weekday": _weekday,
+        "time_from": _timeFrom,
+        "time_to": _timeTo,
+        "label": _label
+      };
 }
 
 class RoutinesModel extends ChangeNotifier {
