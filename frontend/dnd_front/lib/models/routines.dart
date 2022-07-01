@@ -14,16 +14,26 @@ enum Weekday {
   error
 }
 
+enum RoutineStatus {
+  routineNew,
+  routineSending,
+  routineUploaded,
+  routineDownloaded,
+  routineError,
+}
+
 class Routine {
   int _weekday;
   String _timeFrom;
   String _timeTo;
   String? _label;
+  RoutineStatus _routineStatus = RoutineStatus.routineNew;
 
   int get weekeday => _weekday;
   String get timeFrom => _timeFrom;
   String get timeTo => _timeTo;
   String get label => _label ?? "";
+  RoutineStatus get routineStatus => _routineStatus;
   set label(String newLabel) {
     _label = newLabel;
   }
@@ -149,6 +159,20 @@ class RoutinesModel extends ChangeNotifier {
     _labels.add("prefer not to share");
     for (var k in decodedResponse.keys) {
       _labels.add(k);
+    }
+    notifyListeners();
+  }
+
+  Future<void> sendRoutine(Routine routine) async {
+    final response = await http.post(Uri.parse("/add_routine"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(routine.toJson()));
+    if ((response.statusCode >= 200) && (response.statusCode < 300)) {
+      routine._routineStatus = RoutineStatus.routineUploaded;
+    } else {
+      routine._routineStatus = RoutineStatus.routineError;
     }
     notifyListeners();
   }
