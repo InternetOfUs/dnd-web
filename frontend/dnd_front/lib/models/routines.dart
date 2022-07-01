@@ -91,6 +91,10 @@ class Routine {
 
   Routine(this._weekday, this._timeFrom, this._timeTo, this._label);
 
+  bool isValid() {
+    return _timeFrom.isNotEmpty && _timeTo.isNotEmpty;
+  }
+
   Map<String, dynamic> toJson() => {
         "weekday": _weekday,
         "time_from": _timeFrom,
