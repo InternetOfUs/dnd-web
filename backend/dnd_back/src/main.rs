@@ -5,6 +5,24 @@ use actix_web::{middleware::Logger, post, web, App, HttpResponse, HttpServer, Re
 use serde::Deserialize;
 
 #[derive(Deserialize)]
+struct Routine {
+    weekday: i32,
+    time_from: String,
+    time_to: String,
+    label: String,
+}
+
+impl fmt::Display for Routine {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{} - {} - {} - {}",
+            self.weekday, self.time_from, self.time_to, self.label
+        )
+    }
+}
+
+#[derive(Deserialize)]
 struct NormWithUser {
     userid: String,
     norm: Norm,
@@ -33,10 +51,10 @@ impl fmt::Display for Norm {
     }
 }
 
-#[post("/add_norms")]
-async fn echo(norm_with_user: web::Json<NormWithUser>) -> impl Responder {
-    println!("received {}", norm_with_user);
-    HttpResponse::Ok().body(norm_with_user.userid.clone())
+#[post("/add_routine")]
+async fn echo(routine: web::Json<Routine>) -> impl Responder {
+    println!("received {}", routine);
+    HttpResponse::Ok().body(routine.to_string())
 }
 
 #[actix_web::main]
