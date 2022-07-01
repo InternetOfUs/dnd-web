@@ -1,0 +1,12 @@
+# Test routine
+
+POST http://localhost:8888/add_routine HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+    "weekday": 6,
+    "time_from": "07:15am",
+    "time_to": "09:15am",
+    "label": "Home"
+}
