@@ -10,6 +10,10 @@ class RoutinePage extends StatelessWidget {
   Icon buildIcon(BuildContext context, Routine routine) {
     var color = Colors.green;
     var icon = Icons.cloud_upload_rounded;
+    if (!routine.isValid()) {
+      var color = Colors.grey;
+      return Icon(icon, color: color);
+    }
     switch (routine.routineStatus) {
       case RoutineStatus.routineDownloaded:
         color = Colors.blue;
