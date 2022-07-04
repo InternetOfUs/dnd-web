@@ -34,10 +34,14 @@ impl fmt::Display for NormWithUser {
     }
 }
 
+/// Represent a norm
 #[derive(Deserialize)]
 struct Norm {
+    /// Description of the norm, with a keyword to identify the "class"
     description: String,
+    /// When the norm is effective
     whenever: String,
+    /// What to do
     thenceforth: String,
 }
 
