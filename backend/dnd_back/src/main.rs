@@ -27,9 +27,12 @@ impl fmt::Display for Routine {
     }
 }
 
+/// Norm associated with a user
 #[derive(Deserialize)]
 struct NormWithUser {
+    /// User id - owner of the norm
     userid: String,
+    /// The norm
     norm: Norm,
 }
 
