@@ -4,9 +4,9 @@ use actix_files as fs;
 use actix_web::{middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
 use serde::Deserialize;
 
-/// One routine of the user (TODO change name)
+/// One DnDEntry of the user (TODO change name)
 #[derive(Deserialize)]
-struct Routine {
+struct DnDEntry {
     /// Week of the day, 1 Monday .. 7 Sunday
     weekday: i32,
     /// From when DnD
@@ -17,7 +17,7 @@ struct Routine {
     label: String,
 }
 
-impl fmt::Display for Routine {
+impl fmt::Display for DnDEntry {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -63,15 +63,15 @@ impl fmt::Display for Norm {
     }
 }
 
-/// add routine - create a norm
+/// add DnDEntry - create a norm
 ///
 /// # Arguments
 ///
-/// * `routine` - routine in json
-#[post("/add_routine")]
-async fn add_routine(routine: web::Json<Routine>) -> impl Responder {
-    println!("received {}", routine);
-    HttpResponse::Ok().body(routine.to_string())
+/// * `entry` - DnDEntry in json
+#[post("/add_entry")]
+async fn add_entry(entry: web::Json<DnDEntry>) -> impl Responder {
+    println!("received {}", entry);
+    HttpResponse::Ok().body(entry.to_string())
 }
 
 #[actix_web::main]
@@ -80,7 +80,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .wrap(Logger::new("%a %{User-Agent}i"))
-            .service(add_routine)
+            .service(add_entry)
             .service(
                 fs::Files::new("/", "./static")
                     .index_file("index.html")
