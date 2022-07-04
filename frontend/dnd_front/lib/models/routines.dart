@@ -164,7 +164,7 @@ class RoutinesModel extends ChangeNotifier {
   }
 
   Future<void> sendRoutine(Routine routine) async {
-    final response = await http.post(Uri.parse("/add_routine"),
+    final response = await http.post(Uri.parse("/add_entry"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
