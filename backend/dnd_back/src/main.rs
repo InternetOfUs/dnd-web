@@ -4,11 +4,16 @@ use actix_files as fs;
 use actix_web::{middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
 use serde::Deserialize;
 
+/// One routine of the user (TODO change name)
 #[derive(Deserialize)]
 struct Routine {
+    /// Week of the day, 1 Monday .. 7 Sunday
     weekday: i32,
+    /// From when DnD
     time_from: String,
+    /// To
     time_to: String,
+    /// Where the user is usually
     label: String,
 }
 
