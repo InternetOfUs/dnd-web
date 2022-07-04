@@ -51,6 +51,11 @@ impl fmt::Display for Norm {
     }
 }
 
+/// add routine - create a norm
+///
+/// # Arguments
+///
+/// * `routine` - routine in json
 #[post("/add_routine")]
 async fn add_routine(routine: web::Json<Routine>) -> impl Responder {
     println!("received {}", routine);
