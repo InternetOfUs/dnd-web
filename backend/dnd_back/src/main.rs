@@ -102,7 +102,7 @@ async fn send_one_norm(norm: &Norm, userid: &str) -> Result<StatusCode, reqwest:
         .json(&norm)
         .send()
         .await?;
-
+    info!("sended at {} the norm {}", res.url(), norm);
     Ok(res.status())
 }
 
