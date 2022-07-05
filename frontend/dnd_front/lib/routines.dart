@@ -40,7 +40,7 @@ class RoutinePage extends StatelessWidget {
   }
 
   Widget buildRoutine(BuildContext context, Routine routine, int index,
-      RoutinesModel routinesModels) {
+      RoutinesModel routinesModels, String userid) {
     var txtFrom = TextEditingController();
     var txtTo = TextEditingController();
     txtFrom.text = routine.timeFrom;
@@ -148,7 +148,7 @@ class RoutinePage extends StatelessWidget {
             onPressed: !routine.isValid()
                 ? null
                 : () {
-                    routinesModels.sendRoutine(routine);
+                    routinesModels.sendRoutine(routine, userid);
                   },
             icon: buildIcon(context, routine)),
       ],
@@ -165,15 +165,16 @@ class RoutinePage extends StatelessWidget {
               Consumer<LoginModel>(
                   builder: (context, loginModel, child) =>
                       Text(loginModel.login)),
-              Consumer<RoutinesModel>(
-                  builder: (context, routinesModels, child) => ListView.builder(
+              Consumer2<RoutinesModel, LoginModel>(
+                  builder: (context, routinesModels, loginModel, child) =>
+                      ListView.builder(
                         itemCount: routinesModels.routines.length,
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
                           final item = routinesModels.routines[index];
-                          return buildRoutine(
-                              context, item, index, routinesModels);
+                          return buildRoutine(context, item, index,
+                              routinesModels, loginModel.login);
                         },
                       )),
               const Align(
