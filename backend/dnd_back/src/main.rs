@@ -51,7 +51,9 @@ struct Norm {
     whenever: String,
     /// What to do
     thenceforth: String,
+    /// Ontology, mostly null
     ontology: Option<String>,
+    /// Priority, mostly null
     priority: Option<i32>,
 }
 
