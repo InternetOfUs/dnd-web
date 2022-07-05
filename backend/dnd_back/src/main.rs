@@ -31,16 +31,16 @@ impl fmt::Display for DnDEntry {
 
 /// Norm associated with a user
 #[derive(Deserialize)]
-struct NormWithUser {
+struct DnDEntryWitUser {
     /// User id - owner of the norm
     userid: String,
     /// The norm
-    norm: Norm,
+    entry: DnDEntry,
 }
 
-impl fmt::Display for NormWithUser {
+impl fmt::Display for DnDEntryWitUser {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} - {}", self.userid, self.norm)
+        write!(f, "{} - {}", self.userid, self.entry)
     }
 }
 
@@ -96,9 +96,10 @@ async fn send_one_norm(norm: &Norm, userid: &str) -> Result<StatusCode, reqwest:
 ///
 /// * `entry` - DnDEntry in json
 #[post("/add_entry")]
-async fn add_entry(entry: web::Json<DnDEntry>) -> impl Responder {
-    println!("received {}", entry);
-    HttpResponse::Ok().body(entry.to_string())
+async fn add_entry(entry: web::Json<DnDEntryWitUser>) -> impl Responder {
+    let norm = entry;
+    println!("received {}", norm);
+    HttpResponse::Ok().body(norm.to_string())
 }
 
 #[actix_web::main]
