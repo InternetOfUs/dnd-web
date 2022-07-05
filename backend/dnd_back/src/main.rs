@@ -19,6 +19,21 @@ struct DnDEntry {
     label: String,
 }
 
+impl DnDEntry {
+    fn to_norm(&self) -> Norm {
+        Norm {
+            description: Some(format!("DND_REPLACE_ME(UUID?)")),
+            whenever: format!(
+                "is_now_between_times('{}','{}') and is_now_one_of_week_days([{}])",
+                self.time_from, self.time_to, self.weekday
+            ),
+            thenceforth: "not(send_user_message(_,_))".to_string(),
+            ontology: None,
+            priority: None,
+        }
+    }
+}
+
 impl fmt::Display for DnDEntry {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
