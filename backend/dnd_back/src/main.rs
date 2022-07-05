@@ -1,6 +1,7 @@
 use actix_files as fs;
 use actix_web::{middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
 use dotenvy::dotenv;
+use reqwest::{self};
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::fmt::{self};
