@@ -76,7 +76,14 @@ class RoutinePage extends StatelessWidget {
             onTap: () async {
               final newTime = await showTimePicker(
                 context: context,
-                initialTime: const TimeOfDay(hour: 7, minute: 15),
+                initialTime: TimeOfDay.now(),
+                builder: (context, child) {
+                  return MediaQuery(
+                    data: MediaQuery.of(context)
+                        .copyWith(alwaysUse24HourFormat: true),
+                    child: child ?? Container(),
+                  );
+                },
               );
               if (newTime != null) {
                 routine.timeFrom = newTime.format(context);
@@ -97,7 +104,14 @@ class RoutinePage extends StatelessWidget {
             onTap: () async {
               final newTime = await showTimePicker(
                 context: context,
-                initialTime: const TimeOfDay(hour: 9, minute: 15),
+                initialTime: TimeOfDay.now(),
+                builder: (context, child) {
+                  return MediaQuery(
+                    data: MediaQuery.of(context)
+                        .copyWith(alwaysUse24HourFormat: true),
+                    child: child ?? Container(),
+                  );
+                },
               );
               if (newTime != null) {
                 routine.timeTo = newTime.format(context);
