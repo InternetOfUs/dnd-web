@@ -4,6 +4,7 @@ use dotenvy::dotenv;
 use log::info;
 use reqwest::{self, StatusCode};
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use std::env;
 use std::fmt::{self};
 
@@ -22,8 +23,8 @@ struct DnDEntry {
 
 impl DnDEntry {
     fn to_norm(&self) -> Norm {
-        Norm {
-            description: Some(format!("DND_REPLACE_ME(UUID?)")),
+        let mut norm = Norm {
+            description: None,
             whenever: format!(
                 "is_now_between_times('{}','{}') and is_now_one_of_week_days([{}])",
                 self.time_from, self.time_to, self.weekday
@@ -31,7 +32,9 @@ impl DnDEntry {
             thenceforth: "not(send_user_message(_,_))".to_string(),
             ontology: None,
             priority: None,
-        }
+        };
+        norm.description = Some(format!("DND_{}", norm.compute_id()));
+        norm
     }
 }
 
@@ -73,6 +76,16 @@ struct Norm {
     ontology: Option<String>,
     /// Priority, mostly null
     priority: Option<i32>,
+}
+
+impl Norm {
+    fn compute_id(&self) -> String {
+        let mut hasher = Sha256::new();
+        let norm_str = format!("{} - {}", self.whenever, self.thenceforth);
+        hasher.update(norm_str);
+        let hash = hasher.finalize();
+        format!("{:X}", hash)
+    }
 }
 
 impl fmt::Display for Norm {
