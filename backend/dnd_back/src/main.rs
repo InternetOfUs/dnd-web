@@ -94,7 +94,7 @@ async fn send_one_norm(norm: &Norm, userid: &str) -> Result<StatusCode, reqwest:
     let url = format!("{url}profile_manager/profiles/{userid}/norms");
     let client = reqwest::Client::new();
     let res = client
-        .post(url)
+        .post(&url)
         .header("x-wenet-component-apikey", secret)
         .header("Authorization", "test:wenet")
         .header("Content-Type", "application/json")
@@ -102,8 +102,12 @@ async fn send_one_norm(norm: &Norm, userid: &str) -> Result<StatusCode, reqwest:
         .json(&norm)
         .send()
         .await?;
-    info!("sended at {} the norm {}", res.url(), norm);
-    Ok(res.status())
+    let status = res.status();
+    let answer = res.text().await.unwrap_or("no answer".to_string());
+    info!("sended at {} the norm {}", url, norm);
+    info!("answer {}", answer);
+
+    Ok(status)
 }
 
 /// add DnDEntry - create a norm
