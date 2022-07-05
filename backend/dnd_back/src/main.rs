@@ -1,8 +1,9 @@
-use std::fmt::{self};
-
 use actix_files as fs;
 use actix_web::{middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
+use dotenvy::dotenv;
 use serde::{Deserialize, Serialize};
+use std::env;
+use std::fmt::{self};
 
 /// One DnDEntry of the user (TODO change name)
 #[derive(Deserialize)]
@@ -82,6 +83,7 @@ async fn add_entry(entry: web::Json<DnDEntry>) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    dotenv().ok();
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     HttpServer::new(|| {
         App::new()
