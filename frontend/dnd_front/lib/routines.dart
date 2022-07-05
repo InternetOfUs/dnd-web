@@ -2,6 +2,7 @@ import 'package:dnd_front/models/login.dart';
 import 'package:dnd_front/models/routines.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class RoutinePage extends StatelessWidget {
@@ -86,7 +87,10 @@ class RoutinePage extends StatelessWidget {
                 },
               );
               if (newTime != null) {
-                routine.timeFrom = newTime.format(context);
+                var df = DateFormat("h:mm a");
+                var dt = df.parse(newTime!.format(context));
+                var finaltime = DateFormat('HH:mm').format(dt);
+                routine.timeFrom = finaltime;
                 routinesModels.update();
               }
             },
@@ -114,7 +118,10 @@ class RoutinePage extends StatelessWidget {
                 },
               );
               if (newTime != null) {
-                routine.timeTo = newTime.format(context);
+                var df = DateFormat("h:mm a");
+                var dt = df.parse(newTime!.format(context));
+                var finaltime = DateFormat('HH:mm').format(dt);
+                routine.timeTo = finaltime;
                 routinesModels.update();
               }
             },
