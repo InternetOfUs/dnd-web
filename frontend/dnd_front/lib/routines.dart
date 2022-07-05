@@ -96,7 +96,7 @@ class RoutinePage extends StatelessWidget {
             },
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
-              hintText: '0.00am',
+              hintText: '00:00',
             ),
           ),
         ),
@@ -127,7 +127,7 @@ class RoutinePage extends StatelessWidget {
             },
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
-              hintText: '0.00am',
+              hintText: '00:00',
             ),
           ),
         ),
