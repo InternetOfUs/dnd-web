@@ -2,7 +2,7 @@ use std::fmt::{self};
 
 use actix_files as fs;
 use actix_web::{middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// One DnDEntry of the user (TODO change name)
 #[derive(Deserialize)]
@@ -43,14 +43,16 @@ impl fmt::Display for NormWithUser {
 }
 
 /// Represent a norm
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 struct Norm {
     /// Description of the norm, with a keyword to identify the "class"
-    description: String,
+    description: Option<String>,
     /// When the norm is effective
     whenever: String,
     /// What to do
     thenceforth: String,
+    ontology: Option<String>,
+    priority: Option<i32>,
 }
 
 impl fmt::Display for Norm {
@@ -58,7 +60,9 @@ impl fmt::Display for Norm {
         write!(
             f,
             "\n\tdesc: {}\n\twhen: {}\n\tthen: {}",
-            self.description, self.whenever, self.thenceforth
+            self.description.as_ref().unwrap_or(&String::new()),
+            self.whenever,
+            self.thenceforth
         )
     }
 }
