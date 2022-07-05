@@ -113,6 +113,18 @@ class Routine {
       };
 }
 
+class DnDEntryWithUser {
+  final String _userid;
+  final Routine _routine;
+
+  DnDEntryWithUser(this._userid, this._routine);
+
+  Map<String, dynamic> toJson() => {
+        "userid": _userid,
+        "entry": _routine.toJson(),
+      };
+}
+
 class RoutinesModel extends ChangeNotifier {
   final List<Routine> _routines = [];
   final List<String> _labels = [];
@@ -163,12 +175,13 @@ class RoutinesModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> sendRoutine(Routine routine) async {
+  Future<void> sendRoutine(Routine routine, String userid) async {
+    var entry = DnDEntryWithUser(userid, routine);
     final response = await http.post(Uri.parse("/add_entry"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(routine.toJson()));
+        body: jsonEncode(entry.toJson()));
     if ((response.statusCode >= 200) && (response.statusCode < 300)) {
       routine._routineStatus = RoutineStatus.routineUploaded;
     } else {
