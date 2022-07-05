@@ -1,7 +1,7 @@
 use actix_files as fs;
 use actix_web::{middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
 use dotenvy::dotenv;
-use reqwest::{self};
+use reqwest::{self, StatusCode};
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::fmt::{self};
@@ -69,6 +69,25 @@ impl fmt::Display for Norm {
             self.thenceforth
         )
     }
+}
+
+async fn send_one_norm(norm: &Norm, userid: &str) -> Result<StatusCode, reqwest::Error> {
+    let secret = env::var("WENET_SECRET").unwrap_or_default();
+    let url = env::var("WENET_BASE_URL")
+        .unwrap_or_else(|_| "https://wenet.u-hopper.com/dev/".to_string());
+    let url = format!("{url}profile_manager/profiles/{userid}/norms");
+    let client = reqwest::Client::new();
+    let res = client
+        .post(url)
+        .header("x-wenet-component-apikey", secret)
+        .header("Authorization", "test:wenet")
+        .header("Content-Type", "application/json")
+        .header("Accept", "application/json")
+        .json(&norm)
+        .send()
+        .await?;
+
+    Ok(res.status())
 }
 
 /// add DnDEntry - create a norm
