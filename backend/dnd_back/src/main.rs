@@ -1,6 +1,7 @@
 use actix_files as fs;
 use actix_web::{middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
 use dotenvy::dotenv;
+use log::info;
 use reqwest::{self, StatusCode};
 use serde::{Deserialize, Serialize};
 use std::env;
@@ -111,10 +112,17 @@ async fn send_one_norm(norm: &Norm, userid: &str) -> Result<StatusCode, reqwest:
 ///
 /// * `entry` - DnDEntry in json
 #[post("/add_entry")]
-async fn add_entry(entry: web::Json<DnDEntryWitUser>) -> impl Responder {
-    let norm = entry;
-    println!("received {}", norm);
-    HttpResponse::Ok().body(norm.to_string())
+async fn add_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
+    let entry = &dnd_entry.entry;
+    println!("received {}", entry);
+    let norm = entry.to_norm();
+    let res = send_one_norm(&norm, &dnd_entry.userid).await;
+    let msg = match res {
+        Ok(status) => status.to_string(),
+        Err(err) => format!("error while transporting to Profile Manager {err}"),
+    };
+    info!("msg : {msg}");
+    HttpResponse::Ok().body(format!("msg : {msg}"))
 }
 
 #[actix_web::main]
