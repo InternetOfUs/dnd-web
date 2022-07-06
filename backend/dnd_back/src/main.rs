@@ -22,6 +22,8 @@ struct DnDEntry {
 }
 
 impl DnDEntry {
+    /// Transform the `DnDEntry` to a `Norm`
+    /// Returns the norm
     fn to_norm(&self) -> Norm {
         let mut norm = Norm {
             description: None,
