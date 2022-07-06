@@ -79,6 +79,7 @@ struct Norm {
 }
 
 impl Norm {
+    /// Returns the compute id of this [`Norm`]. Use sh256 to create it
     fn compute_id(&self) -> String {
         let mut hasher = Sha256::new();
         let norm_str = format!("{} - {}", self.whenever, self.thenceforth);
