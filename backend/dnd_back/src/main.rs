@@ -100,6 +100,14 @@ impl fmt::Display for Norm {
     }
 }
 
+/// Send one norm to the Profile Manager.
+///
+/// # Arguments
+///
+/// * `norm` The norm to send
+/// * `userid` The userid of the user
+///
+/// Returns Statuscode or reqwest error. The status code can say something wrong happened too
 async fn send_one_norm(norm: &Norm, userid: &str) -> Result<StatusCode, reqwest::Error> {
     let secret = env::var("WENET_SECRET").unwrap_or_default();
     let url = env::var("WENET_BASE_URL")
