@@ -103,6 +103,14 @@ impl fmt::Display for Norm {
     }
 }
 
+/// Get all norms for user `userid`
+///
+/// # Arguments
+///
+/// * `norms` mutable vector who will be filled with norms
+/// * `userid` the user id
+///
+/// Returns Statuscode or reqwest error. The status code can say something wrong happened too
 async fn get_all_norms(userid: &str, norms: &mut Vec<Norm>) -> Result<StatusCode, reqwest::Error> {
     let secret = env::var("WENET_SECRET").unwrap_or_default();
     let url = env::var("WENET_BASE_URL")
