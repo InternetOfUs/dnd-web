@@ -1,7 +1,8 @@
 use actix_files as fs;
+use actix_web::get;
 use actix_web::{middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
 use dotenvy::dotenv;
-use log::info;
+use log::{info, warn};
 use reqwest::{self, StatusCode};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -201,6 +202,41 @@ async fn add_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
     };
     info!("msg : {msg}");
     HttpResponse::Ok().body(format!("msg : {msg}"))
+}
+
+/// add DnDEntry - create a norm
+///
+/// # Arguments
+///
+/// * `entry` - DnDEntry in json
+#[get("/get_entries/{userid}")]
+async fn get_entries(path: web::Path<(String,)>) -> impl Responder {
+    let (userid,) = path.into_inner();
+    let mut norms: Vec<Norm> = vec![];
+    let res = get_all_norms(&userid, &mut norms).await;
+    match res {
+        Ok(status) => {
+            if status.is_success() {
+                let mut entries: Vec<DnDEntry> = vec![];
+                for norm in norms {
+                    if let Some(entry) = norm.to_dnd_entry() {
+                        entries.push(entry);
+                    }
+                }
+                return web::Json(entries);
+            } else {
+                info!(
+                    "issue while getting norm from Profile Manager {}",
+                    status.as_str()
+                );
+                return web::Json(vec![]);
+            }
+        }
+        Err(err) => {
+            warn!("error while getting norm from Profile Manager {err}");
+            return web::Json(vec![]);
+        }
+    };
 }
 
 #[actix_web::main]
