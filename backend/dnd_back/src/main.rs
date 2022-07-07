@@ -9,7 +9,7 @@ use std::env;
 use std::fmt::{self};
 
 /// One DnDEntry of the user (TODO change name)
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 struct DnDEntry {
     /// Week of the day, 1 Monday .. 7 Sunday
     weekday: i32,
@@ -88,6 +88,21 @@ impl Norm {
         hasher.update(norm_str);
         let hash = hasher.finalize();
         format!("{:X}", hash)
+    }
+
+    fn to_dnd_entry(&self) -> Option<DnDEntry> {
+        if let Some(desc) = self.description.clone() {
+            if desc.contains("DND_") {
+                // TODO changeme
+                return Some(DnDEntry {
+                    weekday: 0,
+                    time_from: "00:00".to_string(),
+                    time_to: "00:00".to_string(),
+                    label: "home".to_string(),
+                });
+            }
+        }
+        None
     }
 }
 
