@@ -103,6 +103,33 @@ impl fmt::Display for Norm {
     }
 }
 
+async fn get_all_norms(userid: &str, norms: &mut Vec<Norm>) -> Result<StatusCode, reqwest::Error> {
+    let secret = env::var("WENET_SECRET").unwrap_or_default();
+    let url = env::var("WENET_BASE_URL")
+        .unwrap_or_else(|_| "https://wenet.u-hopper.com/dev/".to_string());
+    let url = format!("{url}profile_manager/profiles/{userid}/norms");
+    let client = reqwest::Client::new();
+    let res = client
+        .get(&url)
+        .header("x-wenet-component-apikey", secret)
+        .header("Authorization", "test:wenet")
+        .header("Accept", "application/json")
+        .send()
+        .await?;
+    let status = res.status();
+    let received_norms: Vec<Option<Norm>> = res.json().await.unwrap_or_default();
+    let received_norms_len = received_norms.len();
+    for norm in received_norms {
+        if let Some(norm) = norm {
+            norms.push(norm);
+        }
+    }
+    info!("asked norms for user {}", userid);
+    info!("answer {} norm(s)", received_norms_len);
+
+    Ok(status)
+}
+
 /// Send one norm to the Profile Manager.
 ///
 /// # Arguments
