@@ -161,8 +161,7 @@ class RoutinesModel extends ChangeNotifier {
 
   Future<void> fillFromProfileManager(login) async {
     final response = await http.get(Uri.parse('/get_entries/$login'));
-    var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes))
-        as List<Map<String, dynamic>>;
+    var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as List;
     _routines.clear();
     for (var routine_map in decodedResponse) {
       Routine routine = Routine.fromJson(routine_map);
