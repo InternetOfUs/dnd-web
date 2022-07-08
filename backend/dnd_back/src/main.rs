@@ -247,6 +247,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(Logger::new("%a %{User-Agent}i"))
             .service(add_entry)
+            .service(get_entries)
             .service(
                 fs::Files::new("/", "./static")
                     .index_file("index.html")
