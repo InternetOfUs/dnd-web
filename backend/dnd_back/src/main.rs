@@ -1,6 +1,5 @@
 use actix_files as fs;
-use actix_web::get;
-use actix_web::{middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
 use dotenvy::dotenv;
 use log::{info, warn};
 use regex::Regex;
@@ -248,6 +247,18 @@ async fn send_one_norm(norm: &Norm, userid: &str) -> Result<StatusCode, reqwest:
     Ok(status)
 }
 
+#[post("/delete_entry")]
+async fn delete_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
+    let entry = &dnd_entry.entry;
+    let userid = &dnd_entry.userid;
+    let res = delete_a_norm(userid, entry).await;
+    let msg = match res {
+        Ok(status) => status.to_string(),
+        Err(err) => format!("{err}"),
+    };
+    msg
+}
+
 /// add DnDEntry - create a norm
 ///
 /// # Arguments
@@ -311,6 +322,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::new("%a %{User-Agent}i"))
             .service(add_entry)
             .service(get_entries)
+            .service(delete_entry)
             .service(
                 fs::Files::new("/", "./static")
                     .index_file("index.html")
