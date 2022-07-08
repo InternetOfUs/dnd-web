@@ -3,6 +3,7 @@ use actix_web::get;
 use actix_web::{middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
 use dotenvy::dotenv;
 use log::{info, warn};
+use regex::Regex;
 use reqwest::{self, StatusCode};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -95,11 +96,19 @@ impl Norm {
         if let Some(desc) = self.description.clone() {
             if desc.contains("DND_") {
                 // TODO changeme
+                let re_whenever = Regex::new(r"is_now_between_times\('(([01][0-9]|2[0-3]):([0-5][0-9]))','(([01][0-9]|2[0-3]):([0-5][0-9]))'\) and is_now_one_of_week_days\(\[(\d)\]\)").unwrap();
+                let caps = re_whenever.captures(&self.whenever).unwrap();
+
+                let time_from = caps.get(1).map_or("", |m| m.as_str());
+                let time_to = caps.get(2).map_or("", |m| m.as_str());
+                let weekday = caps
+                    .get(3)
+                    .map_or(1, |m| m.as_str().parse::<i32>().unwrap());
                 return Some(DnDEntry {
-                    weekday: 0,
-                    time_from: "00:00".to_string(),
-                    time_to: "00:00".to_string(),
-                    label: "home".to_string(),
+                    weekday: weekday,
+                    time_from: time_from.to_string(),
+                    time_to: time_to.to_string(),
+                    label: "Home".to_string(),
                 });
             }
         }
