@@ -111,6 +111,11 @@ class Routine {
         "time_to": _timeTo,
         "label": _label
       };
+  Routine.fromJson(Map<String, dynamic> json)
+      : _weekday = json["weekday"],
+        _timeFrom = json["time_from"],
+        _timeTo = json["time_to"],
+        _label = json["label"] ?? "";
 }
 
 class DnDEntryWithUser {
