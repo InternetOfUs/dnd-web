@@ -100,9 +100,9 @@ impl Norm {
                 let caps = re_whenever.captures(&self.whenever).unwrap();
 
                 let time_from = caps.get(1).map_or("", |m| m.as_str());
-                let time_to = caps.get(2).map_or("", |m| m.as_str());
+                let time_to = caps.get(4).map_or("", |m| m.as_str());
                 let weekday = caps
-                    .get(3)
+                    .get(7)
                     .map_or(1, |m| m.as_str().parse::<i32>().unwrap());
                 return Some(DnDEntry {
                     weekday: weekday,
