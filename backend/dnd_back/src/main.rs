@@ -104,11 +104,16 @@ impl Norm {
                 let weekday = caps
                     .get(7)
                     .map_or(1, |m| m.as_str().parse::<i32>().unwrap());
+
+                let re_description = Regex::new(r"DND_(\w+)_(.*)").unwrap();
+                let caps = re_description.captures(&desc).unwrap();
+                let _norm_id = caps.get(1).map_or("", |m| m.as_str());
+                let norm_label = caps.get(2).map_or("", |m| m.as_str());
                 return Some(DnDEntry {
                     weekday: weekday,
                     time_from: time_from.to_string(),
                     time_to: time_to.to_string(),
-                    label: "Home".to_string(),
+                    label: norm_label.to_string(),
                 });
             }
         }
