@@ -37,7 +37,7 @@ impl DnDEntry {
             ontology: None,
             priority: None,
         };
-        norm.description = Some(format!("DND_{}", norm.compute_id()));
+        norm.description = Some(format!("DND_{}_{}", norm.compute_id(), self.label));
         norm
     }
 }
