@@ -95,7 +95,6 @@ impl Norm {
     fn to_dnd_entry(&self) -> Option<DnDEntry> {
         if let Some(desc) = self.description.clone() {
             if desc.contains("DND_") {
-                // TODO changeme
                 let re_whenever = Regex::new(r"is_now_between_times\('(([01][0-9]|2[0-3]):([0-5][0-9]))','(([01][0-9]|2[0-3]):([0-5][0-9]))'\) and is_now_one_of_week_days\(\[(\d)\]\)").unwrap();
                 let caps = re_whenever.captures(&self.whenever).unwrap();
 
