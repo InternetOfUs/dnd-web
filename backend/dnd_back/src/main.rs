@@ -7,8 +7,8 @@ use regex::Regex;
 use reqwest::{self, StatusCode};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::env;
 use std::fmt::{self};
+use std::{env, vec};
 
 /// One DnDEntry of the user (TODO change name)
 #[derive(Deserialize, Serialize)]
@@ -51,6 +51,10 @@ impl fmt::Display for DnDEntry {
         )
     }
 }
+#[derive(Deserialize, Serialize)]
+struct PartialProfileForPatch {
+    norms: Vec<Norm>,
+}
 
 /// Norm associated with a user
 #[derive(Deserialize)]
@@ -68,7 +72,7 @@ impl fmt::Display for DnDEntryWitUser {
 }
 
 /// Represent a norm
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 struct Norm {
     /// Description of the norm, with a keyword to identify the "class"
     description: Option<String>,
@@ -171,6 +175,46 @@ async fn get_all_norms(userid: &str, norms: &mut Vec<Norm>) -> Result<StatusCode
     info!("answer {} norm(s)", received_norms_len);
 
     Ok(status)
+}
+
+async fn delete_a_norm(userid: &str, entry: &DnDEntry) -> Result<StatusCode, reqwest::Error> {
+    let mut norms: Vec<Norm> = vec![];
+    let norm_to_delete = entry.to_norm();
+    let id_to_delete = norm_to_delete.compute_id();
+    let mut new_norms: Vec<Norm> = vec![];
+    let s_get = get_all_norms(userid, &mut norms).await?;
+    for norm in &norms {
+        if let Some(_dnd_entry) = norm.to_dnd_entry() {
+            if norm.compute_id() != id_to_delete {
+                new_norms.push((*norm).clone());
+            }
+        } else {
+            new_norms.push((*norm).clone());
+        }
+    }
+    let old_len = norms.len();
+    let new_len = new_norms.len();
+    let partial_profile = PartialProfileForPatch { norms: new_norms };
+    let secret = env::var("WENET_SECRET").unwrap_or_default();
+    let url = env::var("WENET_BASE_URL")
+        .unwrap_or_else(|_| "https://wenet.u-hopper.com/dev/".to_string());
+    let url = format!("{url}profile_manager/profiles/{userid}");
+    let client = reqwest::Client::new();
+    let res = client
+        .patch(&url)
+        .header("x-wenet-component-apikey", secret)
+        .header("Authorization", "test:wenet")
+        .header("Content-Type", "application/json")
+        .header("Accept", "application/json")
+        .json(&partial_profile)
+        .send()
+        .await?;
+    let status = res.status();
+    let answer = res.text().await.unwrap_or("no answer".to_string());
+    info!("patched sended, from {} to {}", old_len, new_len);
+    info!("answer {}", answer);
+
+    Ok(s_get)
 }
 
 /// Send one norm to the Profile Manager.
