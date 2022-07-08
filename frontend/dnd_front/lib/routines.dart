@@ -162,6 +162,7 @@ class RoutinePage extends StatelessWidget {
         ),
         IconButton(
             onPressed: () {
+              routinesModels.deleteRoutine(routine, userid);
               routinesModels.removeAt(index);
             },
             icon: const Icon(Icons.cancel_outlined, color: Colors.red)),
