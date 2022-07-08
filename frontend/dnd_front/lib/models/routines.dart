@@ -201,6 +201,21 @@ class RoutinesModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> deleteRoutine(Routine routine, String userid) async {
+    var entry = DnDEntryWithUser(userid, routine);
+    final response = await http.post(Uri.parse("/delete_entry"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(entry.toJson()));
+    if ((response.statusCode >= 200) && (response.statusCode < 300)) {
+      routine._routineStatus = RoutineStatus.routineUploaded;
+    } else {
+      routine._routineStatus = RoutineStatus.routineError;
+    }
+    await fillFromProfileManager(userid);
+  }
+
   void update() {
     notifyListeners();
   }
