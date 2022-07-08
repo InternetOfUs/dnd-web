@@ -92,6 +92,12 @@ impl Norm {
         format!("{:X}", hash)
     }
 
+    /// try to create an DnDEntry from a norm
+    ///
+    /// Not all norms are for DnD, so we don't touch
+    /// unralted noms, only the ones starting by *DND_*
+    ///
+    /// Return Some(DndEntry) if success, None otherwise
     fn to_dnd_entry(&self) -> Option<DnDEntry> {
         if let Some(desc) = self.description.clone() {
             if desc.contains("DND_") {
