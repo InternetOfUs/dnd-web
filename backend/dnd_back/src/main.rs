@@ -1,6 +1,9 @@
 use actix_files as fs;
+use actix_web::web::Data;
 use actix_web::{get, middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{rt as actix_rt, HttpRequest};
 use dotenvy::dotenv;
+use flume::{self, Sender};
 use log::{info, warn};
 use regex::Regex;
 use reqwest::{self, StatusCode};
@@ -284,7 +287,10 @@ async fn add_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
 ///
 /// * `entry` - DnDEntry in json
 #[get("/get_entries/{userid}")]
-async fn get_entries(path: web::Path<(String,)>) -> impl Responder {
+async fn get_entries(path: web::Path<(String,)>, req: HttpRequest) -> impl Responder {
+    let data = req.app_data::<Data<Sender<String>>>().unwrap();
+    let res = data.send("salut".to_string());
+    info!("{:?}", res);
     let (userid,) = path.into_inner();
     let mut norms: Vec<Norm> = vec![];
     let res = get_all_norms(&userid, &mut norms).await;
@@ -317,9 +323,19 @@ async fn get_entries(path: web::Path<(String,)>) -> impl Responder {
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
-    HttpServer::new(|| {
+    let (tx_save, rx_save) = flume::unbounded::<String>();
+    actix_rt::spawn(async move {
+        while let Ok(message) = rx_save.recv() {
+            actix_rt::spawn(async move {
+                info!("received msg {}", message);
+            });
+        }
+    });
+    let data = Data::new(tx_save);
+    HttpServer::new(move || {
         App::new()
             .wrap(Logger::new("%a %{User-Agent}i"))
+            .app_data((Data::clone(&data)))
             .service(add_entry)
             .service(get_entries)
             .service(delete_entry)
