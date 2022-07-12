@@ -344,6 +344,7 @@ async fn main() -> std::io::Result<()> {
             )
     })
     .bind(("0.0.0.0", 8888))?
+    .disable_signals()
     .run()
     .await
 }
