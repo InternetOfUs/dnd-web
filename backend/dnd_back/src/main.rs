@@ -326,9 +326,7 @@ async fn main() -> std::io::Result<()> {
     let (tx_save, rx_save) = flume::unbounded::<String>();
     actix_rt::spawn(async move {
         while let Ok(message) = rx_save.recv() {
-            actix_rt::spawn(async move {
                 info!("received msg {}", message);
-            });
         }
     });
     let data = Data::new(tx_save);
