@@ -12,6 +12,27 @@ use sha2::{Digest, Sha256};
 use std::fmt::{self};
 use std::{env, vec};
 
+/// Action on the Entry
+#[derive(Deserialize, Serialize)]
+enum EntryAction {
+    Create,
+    Delete,
+    Update,
+}
+
+/// User action, mean for recording
+#[derive(Deserialize, Serialize)]
+struct UserAction {
+    /// userid of the user
+    userid: String,
+    /// entry that are touched
+    entry: DnDEntry,
+    /// performed action
+    action: EntryAction,
+    /// status of the action
+    status: String,
+}
+
 /// One DnDEntry of the user (TODO change name)
 #[derive(Deserialize, Serialize)]
 struct DnDEntry {
