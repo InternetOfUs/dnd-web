@@ -271,6 +271,27 @@ async fn send_one_norm(norm: &Norm, userid: &str) -> Result<StatusCode, reqwest:
     Ok(status)
 }
 
+async fn save_user_action(user_action: UserAction) -> bool {
+    if let Ok(url) = env::var("FIREBASE_URL") {
+        let url = format!("{url}action_list.json");
+        let client = reqwest::Client::new();
+        let res = client
+            .post(&url)
+            .header("Content-Type", "application/json")
+            .header("Accept", "application/json")
+            .json(&user_action)
+            .send()
+            .await;
+        if let Ok(_) = res {
+            true
+        } else {
+            false
+        }
+    } else {
+        false
+    }
+}
+
 #[post("/delete_entry")]
 async fn delete_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
     let entry = &dnd_entry.entry;
