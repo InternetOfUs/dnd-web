@@ -301,6 +301,13 @@ async fn delete_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
         Ok(status) => status.to_string(),
         Err(err) => format!("{err}"),
     };
+    let user_action = UserAction {
+        entry: (*entry).clone(),
+        action: EntryAction::Delete,
+        userid: dnd_entry.userid.clone(),
+        status: msg.clone(),
+    };
+    save_user_action(user_action).await;
     msg
 }
 
@@ -319,6 +326,13 @@ async fn add_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
         Ok(status) => status.to_string(),
         Err(err) => format!("error while transporting to Profile Manager {err}"),
     };
+    let user_action = UserAction {
+        entry: (*entry).clone(),
+        action: EntryAction::Create,
+        userid: dnd_entry.userid.clone(),
+        status: msg.clone(),
+    };
+    save_user_action(user_action).await;
     info!("msg : {msg}");
     HttpResponse::Ok().body(format!("msg : {msg}"))
 }
