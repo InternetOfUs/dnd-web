@@ -34,7 +34,7 @@ struct UserAction {
 }
 
 /// One DnDEntry of the user (TODO change name)
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 struct DnDEntry {
     /// Week of the day, 1 Monday .. 7 Sunday
     weekday: i32,
@@ -80,7 +80,7 @@ struct PartialProfileForPatch {
 }
 
 /// Norm associated with a user
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 struct DnDEntryWitUser {
     /// User id - owner of the norm
     userid: String,
