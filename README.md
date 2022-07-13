@@ -22,6 +22,17 @@ A bunch of pre-commits are used in this project. Please install [pre-commit](htt
 just build
 ```
 
+## Prod variables
+
+please provide .env file or set the following variables
+
+```
+WENET_SECRET=
+WENET_BASE_URL="https://wenet.u-hopper.com/dev/"
+FIREBASE_API_KEY=
+FIREBASE_URL=
+```
+
 ## Run
 
 ```bash
