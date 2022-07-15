@@ -7,36 +7,52 @@ import 'package:provider/provider.dart';
 class RoutinePage extends StatelessWidget {
   const RoutinePage({Key? key}) : super(key: key);
 
-  Icon buildIcon(BuildContext context, Routine routine) {
+  ElevatedButton buildEntryBtn(BuildContext context, Routine routine,
+      RoutinesModel routinesModels, String userid) {
     var color = Colors.green;
     var icon = Icons.cloud_upload_rounded;
+    var msg = "Save this rule";
+    var disableButton = !routine.isValid();
     if (!routine.isValid()) {
-      var color = Colors.grey;
-      return Icon(icon, color: color);
+      color = Colors.grey;
+    } else {
+      switch (routine.routineStatus) {
+        case RoutineStatus.routineDownloaded:
+          color = Colors.blue;
+          icon = Icons.cloud_download_rounded;
+          msg = "Rule downloaded";
+          break;
+        case RoutineStatus.routineError:
+          color = Colors.red;
+          icon = Icons.cloud_off_outlined;
+          msg = "Error with this rule";
+          break;
+        case RoutineStatus.routineNew:
+          color = Colors.green;
+          icon = Icons.cloud_upload_rounded;
+          break;
+        case RoutineStatus.routineSending:
+          color = Colors.deepPurple;
+          icon = Icons.send;
+          msg = "Sending...";
+          break;
+        case RoutineStatus.routineUploaded:
+          color = Colors.green;
+          icon = Icons.check;
+          msg = "Rule sent successfully";
+          disableButton = true;
+          break;
+      }
     }
-    switch (routine.routineStatus) {
-      case RoutineStatus.routineDownloaded:
-        color = Colors.blue;
-        icon = Icons.cloud_download_rounded;
-        break;
-      case RoutineStatus.routineError:
-        color = Colors.red;
-        icon = Icons.cloud_off_outlined;
-        break;
-      case RoutineStatus.routineNew:
-        color = Colors.green;
-        icon = Icons.cloud_upload_rounded;
-        break;
-      case RoutineStatus.routineSending:
-        color = Colors.deepPurple;
-        icon = Icons.send;
-        break;
-      case RoutineStatus.routineUploaded:
-        color = Colors.green;
-        icon = Icons.check;
-        break;
-    }
-    return Icon(icon, color: color);
+    return ElevatedButton.icon(
+      onPressed: disableButton
+          ? null
+          : () {
+              routinesModels.sendRoutine(routine, userid);
+            },
+      icon: Icon(icon, color: color),
+      label: Text(msg, style: TextStyle(color: color)),
+    );
   }
 
   Widget buildRoutine(BuildContext context, Routine routine, int index,
@@ -165,13 +181,7 @@ class RoutinePage extends StatelessWidget {
               routinesModels.removeAt(index);
             },
             icon: const Icon(Icons.cancel_outlined, color: Colors.red)),
-        IconButton(
-            onPressed: !routine.isValid()
-                ? null
-                : () {
-                    routinesModels.sendRoutine(routine, userid);
-                  },
-            icon: buildIcon(context, routine)),
+        buildEntryBtn(context, routine, routinesModels, userid)
       ],
     );
   }
