@@ -10,6 +10,7 @@ class RoutinePage extends StatelessWidget {
   ElevatedButton buildEntryBtn(BuildContext context, Routine routine,
       RoutinesModel routinesModels, String userid) {
     var color = Colors.green;
+    var bgColor = Colors.pink.shade50;
     var icon = Icons.cloud_upload_rounded;
     var msg = "Save this rule";
     var disableButton = !routine.isValid();
@@ -52,6 +53,7 @@ class RoutinePage extends StatelessWidget {
             },
       icon: Icon(icon, color: color),
       label: Text(msg, style: TextStyle(color: color)),
+      style: ElevatedButton.styleFrom(primary: bgColor),
     );
   }
 
