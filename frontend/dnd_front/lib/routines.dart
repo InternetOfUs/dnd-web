@@ -213,10 +213,6 @@ class RoutinePage extends StatelessWidget {
               const Align(
                   alignment: Alignment.centerRight,
                   child: SizedBox(height: 50)),
-              ElevatedButton(
-                onPressed: () {},
-                child: const Text('Save'),
-              ),
             ]),
           ),
         ));
