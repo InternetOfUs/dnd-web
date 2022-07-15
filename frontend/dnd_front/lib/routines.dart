@@ -87,7 +87,7 @@ class RoutinePage extends StatelessWidget {
               );
               if (newTime != null) {
                 var df = DateFormat("h:mm a");
-                var dt = df.parse(newTime!.format(context));
+                var dt = df.parse(newTime.format(context));
                 var finaltime = DateFormat('HH:mm').format(dt);
                 routine.timeFrom = finaltime;
                 routinesModels.update();
