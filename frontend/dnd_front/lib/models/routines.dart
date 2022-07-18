@@ -19,6 +19,7 @@ enum RoutineStatus {
   routineSending,
   routineUploaded,
   routineDownloaded,
+  routineEdited,
   routineError,
 }
 
@@ -27,6 +28,7 @@ class Routine implements Comparable<Routine> {
   String _timeFrom;
   String _timeTo;
   String? _label;
+  Routine? _old;
   RoutineStatus _routineStatus = RoutineStatus.routineNew;
 
   int get weekeday => _weekday;
@@ -38,16 +40,47 @@ class Routine implements Comparable<Routine> {
     _routineStatus = status;
   }
 
+  set old(Routine routine) {
+    _old = routine;
+  }
+
   set label(String newLabel) {
+    if (routineStatus == RoutineStatus.routineDownloaded && hasChanged()) {
+      routineStatus = RoutineStatus.routineEdited;
+    }
     _label = newLabel;
   }
 
   set timeFrom(String time) {
+    if (routineStatus == RoutineStatus.routineDownloaded && hasChanged()) {
+      routineStatus = RoutineStatus.routineEdited;
+    }
     _timeFrom = time;
   }
 
   set timeTo(String time) {
+    if (routineStatus == RoutineStatus.routineDownloaded && hasChanged()) {
+      routineStatus = RoutineStatus.routineEdited;
+    }
     _timeTo = time;
+  }
+
+  bool hasChanged() {
+    if (_old != null) {
+      if (_timeFrom != _old!._timeFrom) {
+        return true;
+      }
+      if (_timeTo != _old!._timeTo) {
+        return true;
+      }
+      if (_weekday != _old!._weekday) {
+        return true;
+      }
+      if (_label != _old!._label) {
+        return true;
+      }
+    }
+    return false;
   }
 
   int fromWeekday(String w) {
@@ -131,6 +164,12 @@ class Routine implements Comparable<Routine> {
       return 1;
     }
   }
+
+  Routine.from(Routine routine)
+      : _weekday = routine.weekeday,
+        _timeFrom = routine.timeFrom,
+        _timeTo = routine.timeTo,
+        _label = routine.label;
 }
 
 class DnDEntryWithUser {
@@ -181,6 +220,7 @@ class RoutinesModel extends ChangeNotifier {
     for (var routine_map in decodedResponse) {
       Routine routine = Routine.fromJson(routine_map);
       routine.routineStatus = RoutineStatus.routineDownloaded;
+      routine.old = Routine.from(routine);
       _routines.add(routine);
     }
     for (var i = 1; i < (8 - decodedResponse.length); i++) {

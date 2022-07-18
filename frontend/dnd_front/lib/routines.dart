@@ -23,6 +23,11 @@ class RoutinePage extends StatelessWidget {
           icon = Icons.cloud_download_rounded;
           msg = "Rule downloaded";
           break;
+        case RoutineStatus.routineEdited:
+          color = Colors.cyan;
+          icon = Icons.cloud_upload_rounded;
+          msg = "Save this modification";
+          break;
         case RoutineStatus.routineError:
           color = Colors.red;
           icon = Icons.cloud_off_outlined;
