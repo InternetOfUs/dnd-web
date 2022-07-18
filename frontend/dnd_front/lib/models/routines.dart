@@ -34,6 +34,10 @@ class Routine {
   String get timeTo => _timeTo;
   String get label => _label ?? "";
   RoutineStatus get routineStatus => _routineStatus;
+  set routineStatus(RoutineStatus status) {
+    _routineStatus = status;
+  }
+
   set label(String newLabel) {
     _label = newLabel;
   }
@@ -165,6 +169,7 @@ class RoutinesModel extends ChangeNotifier {
     _routines.clear();
     for (var routine_map in decodedResponse) {
       Routine routine = Routine.fromJson(routine_map);
+      routine.routineStatus = RoutineStatus.routineDownloaded;
       _routines.add(routine);
     }
     for (var i = 1; i < (8 - decodedResponse.length); i++) {
