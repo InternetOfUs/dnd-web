@@ -22,7 +22,7 @@ enum RoutineStatus {
   routineError,
 }
 
-class Routine {
+class Routine implements Comparable<Routine> {
   int _weekday;
   String _timeFrom;
   String _timeTo;
@@ -120,6 +120,17 @@ class Routine {
         _timeFrom = json["time_from"],
         _timeTo = json["time_to"],
         _label = json["label"] ?? "";
+
+  @override
+  int compareTo(Routine other) {
+    if (_weekday < other._weekday) {
+      return -1;
+    } else if (_weekday == other._weekday) {
+      return _timeFrom.compareTo(other._timeFrom);
+    } else {
+      return 1;
+    }
+  }
 }
 
 class DnDEntryWithUser {
@@ -176,6 +187,7 @@ class RoutinesModel extends ChangeNotifier {
       Routine routine = Routine(i, "", "", "");
       _routines.add(routine);
     }
+    _routines.sort();
     retreiveLabels();
   }
 
