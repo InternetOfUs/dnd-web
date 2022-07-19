@@ -403,7 +403,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .wrap(Logger::new("%a %{User-Agent}i"))
-            .app_data((Data::clone(&data)))
+            .app_data(Data::clone(&data))
             .service(add_entry)
             .service(get_entries)
             .service(delete_entry)
