@@ -44,6 +44,8 @@ struct DnDEntry {
     time_to: String,
     /// Where the user is usually
     label: String,
+    /// Previous entry
+    old: Option<Box<DnDEntry>>,
 }
 
 impl DnDEntry {
@@ -146,6 +148,7 @@ impl Norm {
                     time_from: time_from.to_string(),
                     time_to: time_to.to_string(),
                     label: norm_label.to_string(),
+                    old: None,
                 });
             }
         }
