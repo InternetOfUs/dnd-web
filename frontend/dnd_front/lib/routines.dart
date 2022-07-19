@@ -216,7 +216,7 @@ class RoutinePage extends StatelessWidget {
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          final item = routinesModels.routines[index];
+                          var item = routinesModels.routines[index];
                           return buildRoutine(context, item, index,
                               routinesModels, loginModel.login);
                         },
