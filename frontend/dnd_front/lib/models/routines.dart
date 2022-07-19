@@ -249,7 +249,6 @@ class RoutinesModel extends ChangeNotifier {
   }
 
   Future<void> sendRoutine(Routine routine, String userid) async {
-    routine.old = routine;
     var entry = DnDEntryWithUser(userid, routine);
     final response = await http.post(Uri.parse("add_entry"),
         headers: <String, String>{
@@ -258,6 +257,7 @@ class RoutinesModel extends ChangeNotifier {
         body: jsonEncode(entry.toJson()));
     if ((response.statusCode >= 200) && (response.statusCode < 300)) {
       routine._routineStatus = RoutineStatus.routineUploaded;
+      routine.old = Routine.from(routine);
     } else {
       routine._routineStatus = RoutineStatus.routineError;
     }

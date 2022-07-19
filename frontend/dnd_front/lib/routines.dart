@@ -18,6 +18,7 @@ class RoutinePage extends StatelessWidget {
             routine.routineStatus == RoutineStatus.routineUploaded) &&
         routine.hasChanged()) {
       routine.routineStatus = RoutineStatus.routineEdited;
+      print("routine has changed");
       //routinesModels.update();
     }
     if (!routine.isValid()) {
