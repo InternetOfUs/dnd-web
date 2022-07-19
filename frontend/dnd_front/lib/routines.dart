@@ -8,12 +8,18 @@ class RoutinePage extends StatelessWidget {
   const RoutinePage({Key? key}) : super(key: key);
 
   ElevatedButton buildEntryBtn(BuildContext context, Routine routine,
-      RoutinesModel routinesModels, String userid) {
+      RoutinesModel routinesModels, String userid, int index) {
     var color = Colors.green;
     var bgColor = Colors.pink.shade50;
     var icon = Icons.cloud_upload_rounded;
     var msg = "Save this rule";
     var disableButton = !routine.isValid();
+    if ((routine.routineStatus == RoutineStatus.routineDownloaded ||
+            routine.routineStatus == RoutineStatus.routineUploaded) &&
+        routine.hasChanged()) {
+      routine.routineStatus = RoutineStatus.routineEdited;
+      //routinesModels.update();
+    }
     if (!routine.isValid()) {
       color = Colors.grey;
     } else {
@@ -188,7 +194,7 @@ class RoutinePage extends StatelessWidget {
               routinesModels.removeAt(index);
             },
             icon: const Icon(Icons.cancel_outlined, color: Colors.red)),
-        buildEntryBtn(context, routine, routinesModels, userid)
+        buildEntryBtn(context, routine, routinesModels, userid, index)
       ],
     );
   }

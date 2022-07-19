@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -45,21 +44,27 @@ class Routine implements Comparable<Routine> {
   }
 
   set label(String newLabel) {
-    if (routineStatus == RoutineStatus.routineDownloaded && hasChanged()) {
+    if ((routineStatus == RoutineStatus.routineDownloaded ||
+            routineStatus == RoutineStatus.routineUploaded) &&
+        hasChanged()) {
       routineStatus = RoutineStatus.routineEdited;
     }
     _label = newLabel;
   }
 
   set timeFrom(String time) {
-    if (routineStatus == RoutineStatus.routineDownloaded && hasChanged()) {
+    if ((routineStatus == RoutineStatus.routineDownloaded ||
+            routineStatus == RoutineStatus.routineUploaded) &&
+        hasChanged()) {
       routineStatus = RoutineStatus.routineEdited;
     }
     _timeFrom = time;
   }
 
   set timeTo(String time) {
-    if (routineStatus == RoutineStatus.routineDownloaded && hasChanged()) {
+    if ((routineStatus == RoutineStatus.routineDownloaded ||
+            routineStatus == RoutineStatus.routineUploaded) &&
+        hasChanged()) {
       routineStatus = RoutineStatus.routineEdited;
     }
     _timeTo = time;
@@ -244,8 +249,9 @@ class RoutinesModel extends ChangeNotifier {
   }
 
   Future<void> sendRoutine(Routine routine, String userid) async {
+    routine.old = routine;
     var entry = DnDEntryWithUser(userid, routine);
-    final response = await http.post(Uri.parse("/add_entry"),
+    final response = await http.post(Uri.parse("add_entry"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -260,7 +266,7 @@ class RoutinesModel extends ChangeNotifier {
 
   Future<void> deleteRoutine(Routine routine, String userid) async {
     var entry = DnDEntryWithUser(userid, routine);
-    final response = await http.post(Uri.parse("/delete_entry"),
+    final response = await http.post(Uri.parse("delete_entry"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
