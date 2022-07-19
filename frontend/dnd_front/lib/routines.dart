@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:dnd_front/models/login.dart';
 import 'package:dnd_front/models/routines.dart';
 import 'package:flutter/material.dart';
@@ -64,8 +66,13 @@ class RoutinePage extends StatelessWidget {
               routinesModels.sendRoutine(routine, userid);
             },
       icon: Icon(icon, color: color),
-      label: Text(msg, style: TextStyle(color: color)),
-      style: ElevatedButton.styleFrom(primary: bgColor),
+      label: Text(msg,
+          style: TextStyle(
+            color: color,
+            fontFeatures: const [FontFeature.tabularFigures()],
+          )),
+      style: ElevatedButton.styleFrom(
+          primary: bgColor, minimumSize: const Size(200, 30)),
     );
   }
 
@@ -75,128 +82,172 @@ class RoutinePage extends StatelessWidget {
     var txtTo = TextEditingController();
     txtFrom.text = routine.timeFrom;
     txtTo.text = routine.timeTo;
-    return Row(
-      children: [
-        DropdownButton<String>(
-          icon: const Icon(Icons.calendar_today),
-          elevation: 16,
-          style: const TextStyle(color: Colors.deepPurple),
-          underline: Container(
-            height: 2,
-            color: Colors.black,
-          ),
-          onChanged: (String? newValue) {
-            routine.fromWeekday(newValue!);
-            routinesModels.update();
-          },
-          value: routine.weekdayStr,
-          items: routinesModels.weekdays
-              .map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-        ),
-        const SizedBox(width: 60.0, child: Text("From: ")),
-        SizedBox(
-          width: 100.0,
-          child: TextField(
-            controller: txtFrom,
-            onTap: () async {
-              final newTime = await showTimePicker(
-                context: context,
-                initialTime: TimeOfDay.now(),
-                builder: (context, child) {
-                  return MediaQuery(
-                    data: MediaQuery.of(context)
-                        .copyWith(alwaysUse24HourFormat: true),
-                    child: child ?? Container(),
-                  );
-                },
-              );
-              if (newTime != null) {
-                var df = DateFormat("h:mm a");
-                var dt = df.parse(newTime.format(context));
-                var finaltime = DateFormat('HH:mm').format(dt);
-                routine.timeFrom = finaltime;
-                routinesModels.update();
-              }
-            },
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: '00:00',
+    return Center(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Card(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const SizedBox(width: 20.0),
+                      DropdownButton<String>(
+                        icon: const Icon(Icons.calendar_today),
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.deepPurple),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.black,
+                        ),
+                        onChanged: (String? newValue) {
+                          routine.fromWeekday(newValue!);
+                          routinesModels.update();
+                        },
+                        value: routine.weekdayStr,
+                        items: routinesModels.weekdays
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(width: 20.0),
+                      const SizedBox(width: 60.0, child: Text("From: ")),
+                      SizedBox(
+                        width: 100.0,
+                        child: TextField(
+                          controller: txtFrom,
+                          onTap: () async {
+                            final newTime = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                              builder: (context, child) {
+                                return MediaQuery(
+                                  data: MediaQuery.of(context)
+                                      .copyWith(alwaysUse24HourFormat: true),
+                                  child: child ?? Container(),
+                                );
+                              },
+                            );
+                            if (newTime != null) {
+                              var df = DateFormat("h:mm a");
+                              var dt = df.parse(newTime.format(context));
+                              var finaltime = DateFormat('HH:mm').format(dt);
+                              routine.timeFrom = finaltime;
+                              routinesModels.update();
+                            }
+                          },
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: '00:00',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 20.0),
+                      const SizedBox(width: 30.0, child: Text("To: ")),
+                      SizedBox(
+                        width: 100.0,
+                        child: TextField(
+                          controller: txtTo,
+                          onTap: () async {
+                            final newTime = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                              builder: (context, child) {
+                                return MediaQuery(
+                                  data: MediaQuery.of(context)
+                                      .copyWith(alwaysUse24HourFormat: true),
+                                  child: child ?? Container(),
+                                );
+                              },
+                            );
+                            if (newTime != null) {
+                              var df = DateFormat("h:mm a");
+                              var dt = df.parse(newTime.format(context));
+                              var finaltime = DateFormat('HH:mm').format(dt);
+                              routine.timeTo = finaltime;
+                              routinesModels.update();
+                            }
+                          },
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: '00:00',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 20.0),
+                      OutlinedButton(
+                        onPressed: () {
+                          Routine newRoutine =
+                              Routine(routine.weekeday, "", "", "");
+                          routinesModels.addAt(newRoutine, index);
+                        },
+                        child: const Text('add time slot'),
+                      ),
+                      const SizedBox(width: 20.0)
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(width: 20.0),
+                      DropdownButton<String>(
+                        icon: const Icon(Icons.location_pin),
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.deepPurple),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.deepPurpleAccent,
+                        ),
+                        onChanged: (String? newValue) {
+                          routine.label = newValue!;
+                          routinesModels.update();
+                        },
+                        value: routine.label == "" ? null : routine.label,
+                        hint: const Text("Where are you usually at this time?"),
+                        items: routinesModels.labels
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                routinesModels.deleteRoutine(routine, userid);
+                                routinesModels.removeAt(index);
+                              },
+                              icon: const Icon(Icons.cancel_outlined,
+                                  color: Colors.red)),
+                          const SizedBox(width: 8),
+                          buildEntryBtn(
+                              context, routine, routinesModels, userid, index),
+                          const SizedBox(width: 8),
+                        ],
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-        const SizedBox(width: 30.0, child: Text("To: ")),
-        SizedBox(
-          width: 100.0,
-          child: TextField(
-            controller: txtTo,
-            onTap: () async {
-              final newTime = await showTimePicker(
-                context: context,
-                initialTime: TimeOfDay.now(),
-                builder: (context, child) {
-                  return MediaQuery(
-                    data: MediaQuery.of(context)
-                        .copyWith(alwaysUse24HourFormat: true),
-                    child: child ?? Container(),
-                  );
-                },
-              );
-              if (newTime != null) {
-                var df = DateFormat("h:mm a");
-                var dt = df.parse(newTime.format(context));
-                var finaltime = DateFormat('HH:mm').format(dt);
-                routine.timeTo = finaltime;
-                routinesModels.update();
-              }
-            },
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: '00:00',
-            ),
-          ),
-        ),
-        OutlinedButton(
-          onPressed: () {
-            Routine newRoutine = Routine(routine.weekeday, "", "", "");
-            routinesModels.addAt(newRoutine, index);
-          },
-          child: const Text('add time slot'),
-        ),
-        DropdownButton<String>(
-          icon: const Icon(Icons.location_pin),
-          elevation: 16,
-          style: const TextStyle(color: Colors.deepPurple),
-          underline: Container(
-            height: 2,
-            color: Colors.deepPurpleAccent,
-          ),
-          onChanged: (String? newValue) {
-            routine.label = newValue!;
-            routinesModels.update();
-          },
-          value: routine.label == "" ? null : routine.label,
-          hint: const Text("Where are you usually at this time?"),
-          items: routinesModels.labels
-              .map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-        ),
-        IconButton(
-            onPressed: () {
-              routinesModels.deleteRoutine(routine, userid);
-              routinesModels.removeAt(index);
-            },
-            icon: const Icon(Icons.cancel_outlined, color: Colors.red)),
-        buildEntryBtn(context, routine, routinesModels, userid, index)
-      ],
+        ],
+      ),
     );
   }
 
@@ -204,9 +255,9 @@ class RoutinePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text('Routines')),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(children: [
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
               Consumer<LoginModel>(
                   builder: (context, loginModel, child) =>
                       Text(loginModel.login)),
@@ -222,9 +273,6 @@ class RoutinePage extends StatelessWidget {
                               routinesModels, loginModel.login);
                         },
                       )),
-              const Align(
-                  alignment: Alignment.centerRight,
-                  child: SizedBox(height: 50)),
             ]),
           ),
         ));
