@@ -323,9 +323,19 @@ async fn delete_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
 async fn add_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
     let entry = &dnd_entry.entry;
     println!("received {}", entry);
+    let mut all_msg = "".to_owned();
+    if let Some(old) = entry.old.clone() {
+        let res = delete_a_norm(&dnd_entry.userid, &old).await;
+        let msg = match res {
+            Ok(status) => status.to_string(),
+            Err(err) => format!("error while updating norm to Profile Manager {err}"),
+        };
+        all_msg = format!("msg1 {}", msg);
+        info!("msg1 : {msg}");
+    }
     let norm = entry.to_norm();
     let res = send_one_norm(&norm, &dnd_entry.userid).await;
-    let msg = match res {
+    let msg2 = match res {
         Ok(status) => status.to_string(),
         Err(err) => format!("error while transporting to Profile Manager {err}"),
     };
@@ -333,11 +343,12 @@ async fn add_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
         entry: (*entry).clone(),
         action: EntryAction::Create,
         userid: dnd_entry.userid.clone(),
-        status: msg.clone(),
+        status: msg2.clone(),
     };
+    all_msg = format!("{all_msg} msg2 {}", msg2);
     save_user_action(user_action).await;
-    info!("msg : {msg}");
-    HttpResponse::Ok().body(format!("msg : {msg}"))
+    info!("msg2 : {msg2}");
+    HttpResponse::Ok().body(format!("all : {all_msg}"))
 }
 
 /// add DnDEntry - create a norm
