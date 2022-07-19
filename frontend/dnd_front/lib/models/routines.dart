@@ -34,12 +34,13 @@ class Routine implements Comparable<Routine> {
   String get timeFrom => _timeFrom;
   String get timeTo => _timeTo;
   String get label => _label ?? "";
+  Routine? get old => _old;
   RoutineStatus get routineStatus => _routineStatus;
   set routineStatus(RoutineStatus status) {
     _routineStatus = status;
   }
 
-  set old(Routine routine) {
+  set old(Routine? routine) {
     _old = routine;
   }
 
@@ -151,7 +152,8 @@ class Routine implements Comparable<Routine> {
         "weekday": _weekday,
         "time_from": _timeFrom,
         "time_to": _timeTo,
-        "label": _label
+        "label": _label,
+        "old": _old
       };
   Routine.fromJson(Map<String, dynamic> json)
       : _weekday = json["weekday"],
@@ -174,7 +176,8 @@ class Routine implements Comparable<Routine> {
       : _weekday = routine.weekeday,
         _timeFrom = routine.timeFrom,
         _timeTo = routine.timeTo,
-        _label = routine.label;
+        _label = routine.label,
+        _old = routine.old;
 }
 
 class DnDEntryWithUser {
