@@ -11,6 +11,34 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::fmt::{self};
 use std::{env, vec};
+/// All possible errors
+#[derive(Deserialize, Serialize)]
+enum DnDError {
+    /// Unable to perform the operations (bad auth?)
+    OperationNotPermitted,
+    /// Timeout when connecting to Profile Manager
+    ProfileManagerTimeout,
+    /// User not found
+    ProfileManagerUserNotFound,
+    /// Unable to create a norm
+    ProfileManagerUnableToCreateNorm,
+    /// Unable to delete a norm
+    ProfileManagerUnableToDeleteNorm,
+    /// Error 500 from the Profile Manager
+    ProfileManager500,
+    /// For unknown errors
+    UnknownError,
+}
+#[derive(Deserialize, Serialize)]
+enum Content {
+    Entries(Vec<DnDEntry>),
+}
+
+#[derive(Deserialize, Serialize)]
+struct Message {
+    error: Option<DnDError>,
+    content: Option<Content>,
+}
 
 /// Action on the Entry
 #[derive(Deserialize, Serialize)]
