@@ -333,18 +333,43 @@ async fn delete_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
     let entry = &dnd_entry.entry;
     let userid = &dnd_entry.userid;
     let res = delete_a_norm(userid, entry).await;
-    let msg = match res {
-        Ok(status) => status.to_string(),
-        Err(err) => format!("{err}"),
+    let res = match res {
+        Ok(status) => {
+            if status.is_success() {
+                Message {
+                    content: None,
+                    error: None,
+                }
+            } else {
+                match status {
+                    StatusCode::INTERNAL_SERVER_ERROR => Message {
+                        error: Some(DnDError::ProfileManager500),
+                        content: None,
+                    },
+                    StatusCode::NOT_FOUND => Message {
+                        error: Some(DnDError::ProfileManagerUserNotFound),
+                        content: None,
+                    },
+                    _ => Message {
+                        error: Some(DnDError::UnknownError),
+                        content: None,
+                    },
+                }
+            }
+        }
+        Err(_) => Message {
+            error: Some(DnDError::ProfileManagerTimeout),
+            content: None,
+        },
     };
     let user_action = UserAction {
         entry: (*entry).clone(),
         action: EntryAction::Delete,
         userid: dnd_entry.userid.clone(),
-        status: msg.clone(),
+        status: format!("{:?}", res),
     };
     save_user_action(user_action).await;
-    msg
+    web::Json(res)
 }
 
 /// add DnDEntry - create a norm
