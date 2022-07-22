@@ -12,7 +12,7 @@ use sha2::{Digest, Sha256};
 use std::fmt::{self};
 use std::{env, vec};
 /// All possible errors
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 enum DnDError {
     /// Unable to perform the operations (bad auth?)
     OperationNotPermitted,
@@ -29,17 +29,22 @@ enum DnDError {
     /// For unknown errors
     UnknownError,
 }
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 enum Content {
     Entries(Vec<DnDEntry>),
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 struct Message {
     error: Option<DnDError>,
     content: Option<Content>,
 }
 
+impl fmt::Display for Message {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "error {:?} - content {:?}", self.error, self.content)
+    }
+}
 /// Action on the Entry
 #[derive(Deserialize, Serialize)]
 enum EntryAction {
@@ -62,7 +67,7 @@ struct UserAction {
 }
 
 /// One DnDEntry of the user (TODO change name)
-#[derive(Deserialize, Serialize, Clone)]
+#[derive(Deserialize, Serialize, Clone, Debug)]
 struct DnDEntry {
     /// Week of the day, 1 Monday .. 7 Sunday
     weekday: i32,
