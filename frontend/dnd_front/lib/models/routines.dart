@@ -2,6 +2,24 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+enum DnDError {
+  OperationNotPermitted,
+
+  ProfileManagerTimeout,
+
+  ProfileManagerUserNotFound,
+
+  ProfileManagerUnableToCreateNorm,
+
+  ProfileManagerUnableToEdit,
+
+  ProfileManagerUnableToDeleteNorm,
+
+  ProfileManager500,
+
+  UnknownError,
+}
+
 enum Weekday {
   monday,
   tuesday,
@@ -223,20 +241,26 @@ class RoutinesModel extends ChangeNotifier {
 
   Future<void> fillFromProfileManager(login) async {
     final response = await http.get(Uri.parse('/get_entries/$login'));
-    var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as List;
-    _routines.clear();
-    for (var routine_map in decodedResponse) {
-      Routine routine = Routine.fromJson(routine_map);
-      routine.routineStatus = RoutineStatus.routineDownloaded;
-      routine.old = Routine.from(routine);
-      _routines.add(routine);
+    var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+    if (decodedResponse.containsKey("Error") &&
+        decodedResponse["Error"] != null) {
+      // TODO manager error
+    } else if (decodedResponse.containsKey("Content") &&
+        decodedResponse["Content"] != null) {
+      _routines.clear();
+      for (var routine_map in decodedResponse["Content"]) {
+        Routine routine = Routine.fromJson(routine_map);
+        routine.routineStatus = RoutineStatus.routineDownloaded;
+        routine.old = Routine.from(routine);
+        _routines.add(routine);
+      }
+      for (var i = 1; i < (8 - decodedResponse.length); i++) {
+        Routine routine = Routine(i, "", "", "");
+        _routines.add(routine);
+      }
+      _routines.sort();
+      retreiveLabels();
     }
-    for (var i = 1; i < (8 - decodedResponse.length); i++) {
-      Routine routine = Routine(i, "", "", "");
-      _routines.add(routine);
-    }
-    _routines.sort();
-    retreiveLabels();
   }
 
   Future<void> retreiveLabels() async {
@@ -258,11 +282,13 @@ class RoutinesModel extends ChangeNotifier {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(entry.toJson()));
-    if ((response.statusCode >= 200) && (response.statusCode < 300)) {
+    var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+    if (decodedResponse.containsKey("Error") &&
+        decodedResponse["Error"] != null) {
+      routine._routineStatus = RoutineStatus.routineError;
+    } else {
       routine._routineStatus = RoutineStatus.routineUploaded;
       routine.old = Routine.from(routine);
-    } else {
-      routine._routineStatus = RoutineStatus.routineError;
     }
     notifyListeners();
   }
@@ -274,10 +300,12 @@ class RoutinesModel extends ChangeNotifier {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(entry.toJson()));
-    if ((response.statusCode >= 200) && (response.statusCode < 300)) {
-      routine._routineStatus = RoutineStatus.routineUploaded;
-    } else {
+    var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+    if (decodedResponse.containsKey("Error") &&
+        decodedResponse["Error"] != null) {
       routine._routineStatus = RoutineStatus.routineError;
+    } else {
+      routine._routineStatus = RoutineStatus.routineUploaded;
     }
     await fillFromProfileManager(userid);
   }
