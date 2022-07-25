@@ -352,6 +352,10 @@ async fn delete_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
                         error: Some(DnDError::ProfileManagerUserNotFound),
                         content: None,
                     },
+                    StatusCode::GATEWAY_TIMEOUT => Message {
+                        error: Some(DnDError::ProfileManagerTimeout),
+                        content: None,
+                    },
                     _ => Message {
                         error: Some(DnDError::ProfileManagerUnableToCreateNorm),
                         content: None,
@@ -402,6 +406,10 @@ async fn add_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
                             error: Some(DnDError::ProfileManagerUserNotFound),
                             content: None,
                         },
+                        StatusCode::GATEWAY_TIMEOUT => Message {
+                            error: Some(DnDError::ProfileManagerTimeout),
+                            content: None,
+                        },
                         _ => Message {
                             error: Some(DnDError::ProfileManagerUnableToDeleteNorm),
                             content: None,
@@ -435,6 +443,10 @@ async fn add_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
                     },
                     StatusCode::NOT_FOUND => Message {
                         error: Some(DnDError::ProfileManagerUserNotFound),
+                        content: None,
+                    },
+                    StatusCode::GATEWAY_TIMEOUT => Message {
+                        error: Some(DnDError::ProfileManagerTimeout),
                         content: None,
                     },
                     _ => Message {
@@ -493,6 +505,10 @@ async fn get_entries(path: web::Path<(String,)>, req: HttpRequest) -> impl Respo
                     },
                     StatusCode::NOT_FOUND => Message {
                         error: Some(DnDError::ProfileManagerUserNotFound),
+                        content: None,
+                    },
+                    StatusCode::GATEWAY_TIMEOUT => Message {
+                        error: Some(DnDError::ProfileManagerTimeout),
                         content: None,
                     },
                     _ => Message {
