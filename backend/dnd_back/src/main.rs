@@ -472,7 +472,7 @@ async fn get_entries(path: web::Path<(String,)>, req: HttpRequest) -> impl Respo
     let (userid,) = path.into_inner();
     let mut norms: Vec<Norm> = vec![];
     let res = get_all_norms(&userid, &mut norms).await;
-    match res {
+    let res = match res {
         Ok(status) => {
             if status.is_success() {
                 let mut entries: Vec<DnDEntry> = vec![];
@@ -481,20 +481,33 @@ async fn get_entries(path: web::Path<(String,)>, req: HttpRequest) -> impl Respo
                         entries.push(entry);
                     }
                 }
-                return web::Json(entries);
+                Message {
+                    content: Some(Content::Entries(entries)),
+                    error: None,
+                }
             } else {
-                info!(
-                    "issue while getting norm from Profile Manager {}",
-                    status.as_str()
-                );
-                return web::Json(vec![]);
+                match status {
+                    StatusCode::INTERNAL_SERVER_ERROR => Message {
+                        error: Some(DnDError::ProfileManager500),
+                        content: None,
+                    },
+                    StatusCode::NOT_FOUND => Message {
+                        error: Some(DnDError::ProfileManagerUserNotFound),
+                        content: None,
+                    },
+                    _ => Message {
+                        error: Some(DnDError::UnknownError),
+                        content: None,
+                    },
+                }
             }
         }
-        Err(err) => {
-            warn!("error while getting norm from Profile Manager {err}");
-            return web::Json(vec![]);
-        }
+        Err(_) => Message {
+            error: Some(DnDError::ProfileManagerTimeout),
+            content: None,
+        },
     };
+    web::Json(res)
 }
 
 #[actix_web::main]
