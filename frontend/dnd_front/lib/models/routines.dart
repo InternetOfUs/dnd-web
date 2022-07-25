@@ -242,13 +242,13 @@ class RoutinesModel extends ChangeNotifier {
   Future<void> fillFromProfileManager(login) async {
     final response = await http.get(Uri.parse('/get_entries/$login'));
     var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-    if (decodedResponse.containsKey("Error") &&
-        decodedResponse["Error"] != null) {
+    if (decodedResponse.containsKey("error") &&
+        decodedResponse["error"] != null) {
       // TODO manager error
-    } else if (decodedResponse.containsKey("Content") &&
-        decodedResponse["Content"] != null) {
+    } else if (decodedResponse.containsKey("content") &&
+        decodedResponse["content"] != null) {
       _routines.clear();
-      for (var routine_map in decodedResponse["Content"]) {
+      for (var routine_map in decodedResponse["content"]["Entries"] as List) {
         Routine routine = Routine.fromJson(routine_map);
         routine.routineStatus = RoutineStatus.routineDownloaded;
         routine.old = Routine.from(routine);
@@ -283,8 +283,8 @@ class RoutinesModel extends ChangeNotifier {
         },
         body: jsonEncode(entry.toJson()));
     var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-    if (decodedResponse.containsKey("Error") &&
-        decodedResponse["Error"] != null) {
+    if (decodedResponse.containsKey("error") &&
+        decodedResponse["error"] != null) {
       routine._routineStatus = RoutineStatus.routineError;
     } else {
       routine._routineStatus = RoutineStatus.routineUploaded;
@@ -301,8 +301,8 @@ class RoutinesModel extends ChangeNotifier {
         },
         body: jsonEncode(entry.toJson()));
     var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-    if (decodedResponse.containsKey("Error") &&
-        decodedResponse["Error"] != null) {
+    if (decodedResponse.containsKey("error") &&
+        decodedResponse["error"] != null) {
       routine._routineStatus = RoutineStatus.routineError;
     } else {
       routine._routineStatus = RoutineStatus.routineUploaded;
