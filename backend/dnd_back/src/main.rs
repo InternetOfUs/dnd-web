@@ -351,7 +351,7 @@ async fn delete_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
                         content: None,
                     },
                     _ => Message {
-                        error: Some(DnDError::UnknownError),
+                        error: Some(DnDError::ProfileManagerUnableToCreateNorm),
                         content: None,
                     },
                 }
