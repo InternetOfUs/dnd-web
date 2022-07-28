@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wenet-dnd-deployment
+  labels:
+    app: wenet-dnd
+spec:
+  selector:
+    matchLabels:
+      app: wenet-dnd
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wenet-dnd
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: settings-wenet-dnd-env
+        name: wenet-dnd
+        image: docker.idiap.ch/wenet/dnd-web:latest
+        volumeMounts:
+          - name: tz-zurich
+            mountPath: /etc/localtime
+
+        command: ["/app/dnd_back"]
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: 10Gi
+            #cpu: "2"
+          requests:
+            memory: 10Gi
+            #cpu: "2"
+      imagePullSecrets:
+      - name: wenet-realtime-secret
+      volumes:
+      - name: tz-zurich
+        hostPath:
+          path: /usr/share/zoneinfo/Europe/Zurich
+
+---
+
+apiVersion: v1
+data:
+    DND_PORT: "80"
+    WENET_SECRET: "REDACTED"
+    WENET_BASE_URL: "https://wenet.u-hopper.com/dev/"
+    FIREBASE_API_KEY: "REDACTED"
+    FIREBASE_URL: "REDACTED"
+kind: ConfigMap
+metadata:
+    name: settings-wenet-dnd-env
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wenet-dnd
+spec:
+  selector:
+    app: wenet-dnd
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
