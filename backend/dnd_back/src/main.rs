@@ -529,6 +529,8 @@ async fn get_entries(path: web::Path<(String,)>, req: HttpRequest) -> impl Respo
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
+    let port = env::var("DND_PORT").unwrap_or("8888".to_owned());
+    let port = port.parse::<u16>().expect("bad port number");
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     let (tx_save, rx_save) = flume::unbounded::<String>();
     actix_rt::spawn(async move {
@@ -550,7 +552,7 @@ async fn main() -> std::io::Result<()> {
                     .use_last_modified(true),
             )
     })
-    .bind(("0.0.0.0", 8888))?
+    .bind(("0.0.0.0", port))?
     .disable_signals()
     .run()
     .await
