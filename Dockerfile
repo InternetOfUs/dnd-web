@@ -34,6 +34,9 @@ RUN cargo install --path .
 # deployed container
 FROM ubuntu:22.04
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates
+
 COPY --from=build_back /usr/local/cargo/bin/dnd_back /app/
 COPY --from=build_front /build/frontend/dnd_front/build/web /app/static
 WORKDIR /app
