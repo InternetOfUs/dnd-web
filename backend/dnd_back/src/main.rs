@@ -4,7 +4,7 @@ use actix_web::{get, middleware::Logger, post, web, App, HttpResponse, HttpServe
 use actix_web::{rt as actix_rt, HttpRequest};
 use dotenvy::dotenv;
 use flume::{self, Sender};
-use log::{info, warn};
+use log::{self, info, warn};
 use regex::Regex;
 use reqwest::{self, StatusCode};
 use serde::{Deserialize, Serialize};
@@ -363,10 +363,13 @@ async fn delete_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
                 }
             }
         }
-        Err(_) => Message {
-            error: Some(DnDError::ProfileManagerTimeout),
-            content: None,
-        },
+        Err(e) => {
+            log::error!("{:?}", e);
+            Message {
+                error: Some(DnDError::ProfileManagerTimeout),
+                content: None,
+            }
+        }
     };
     let user_action = UserAction {
         entry: (*entry).clone(),
@@ -417,10 +420,13 @@ async fn add_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
                     }
                 }
             }
-            Err(_) => Message {
-                error: Some(DnDError::ProfileManagerTimeout),
-                content: None,
-            },
+            Err(e) => {
+                log::error!("{:?}", e);
+                Message {
+                    error: Some(DnDError::ProfileManagerTimeout),
+                    content: None,
+                }
+            }
         };
         if previous_msg.error.is_some() {
             return web::Json(previous_msg);
@@ -456,10 +462,13 @@ async fn add_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
                 }
             }
         }
-        Err(_) => Message {
-            error: Some(DnDError::ProfileManagerTimeout),
-            content: None,
-        },
+        Err(e) => {
+            log::error!("{:?}", e);
+            Message {
+                error: Some(DnDError::ProfileManagerTimeout),
+                content: None,
+            }
+        }
     };
     let user_action = UserAction {
         entry: (*entry).clone(),
@@ -518,10 +527,13 @@ async fn get_entries(path: web::Path<(String,)>, req: HttpRequest) -> impl Respo
                 }
             }
         }
-        Err(_) => Message {
-            error: Some(DnDError::ProfileManagerTimeout),
-            content: None,
-        },
+        Err(e) => {
+            log::error!("{:?}", e);
+            Message {
+                error: Some(DnDError::ProfileManagerTimeout),
+                content: None,
+            }
+        }
     };
     web::Json(res)
 }
