@@ -32,7 +32,7 @@ RUN cargo clean
 RUN cargo build --release
 
 # deployed container
-FROM scratch
+FROM ubuntu:22.04
 
 COPY --from=build_back /build/backend/dnd_back/target/x86_64-unknown-linux-musl/release/dnd_back /app/
 COPY --from=build_front /build/frontend/dnd_front/build/web /app/static
