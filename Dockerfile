@@ -15,7 +15,7 @@ RUN flutter clean
 RUN flutter test
 
 # build web (static html, css and JS)
-RUN flutter build web --release
+RUN flutter build web --release --base-href "/devel/hub/wenet/dnd/"
 
 # build the backend
 # use custom image for static build with musls
