@@ -240,8 +240,7 @@ class RoutinesModel extends ChangeNotifier {
   }
 
   Future<void> fillFromProfileManager(login) async {
-    final response =
-        await http.get(Uri.parse('${Uri.base}/get_entries/$login'));
+    final response = await http.get(Uri.parse('${Uri.base}get_entries/$login'));
     var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
     if (decodedResponse.containsKey("error") &&
         decodedResponse["error"] != null) {
@@ -266,7 +265,7 @@ class RoutinesModel extends ChangeNotifier {
 
   Future<void> retreiveLabels() async {
     final response =
-        await http.get(Uri.parse('${Uri.base}/wenet_regions_mapping.json'));
+        await http.get(Uri.parse('${Uri.base}wenet_regions_mapping.json'));
     var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
     _labels.clear();
     _labels.add("");
@@ -279,7 +278,7 @@ class RoutinesModel extends ChangeNotifier {
 
   Future<void> sendRoutine(Routine routine, String userid) async {
     var entry = DnDEntryWithUser(userid, routine);
-    final response = await http.post(Uri.parse("${Uri.base}/add_entry"),
+    final response = await http.post(Uri.parse("${Uri.base}add_entry"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -297,7 +296,7 @@ class RoutinesModel extends ChangeNotifier {
 
   Future<void> deleteRoutine(Routine routine, String userid) async {
     var entry = DnDEntryWithUser(userid, routine);
-    final response = await http.post(Uri.parse("${Uri.base}/delete_entry"),
+    final response = await http.post(Uri.parse("${Uri.base}delete_entry"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
