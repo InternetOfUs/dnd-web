@@ -19,9 +19,9 @@ RUN flutter build web --release --base-href "/devel/hub/wenet/dnd/"
 
 # build the backend
 # use custom image for static build with musls
-FROM ekidd/rust-musl-builder:latest as build_back
+FROM rust:1.62.1 as build_back
 
-COPY --chown=rust:rust backend /build/backend/
+COPY backend /build/backend/
 
 WORKDIR /build/backend/dnd_back/
 
@@ -29,12 +29,12 @@ WORKDIR /build/backend/dnd_back/
 RUN cargo clean
 
 # build in release mode
-RUN cargo build --release
+RUN cargo install --path .
 
 # deployed container
 FROM ubuntu:22.04
 
-COPY --from=build_back /build/backend/dnd_back/target/x86_64-unknown-linux-musl/release/dnd_back /app/
+COPY --from=build_back /usr/local/cargo/bin/dnd_back /app/
 COPY --from=build_front /build/frontend/dnd_front/build/web /app/static
 WORKDIR /app
 EXPOSE 8888
