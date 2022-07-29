@@ -6,9 +6,11 @@ import 'package:dnd_front/models/routines.dart';
 import 'package:dnd_front/routines.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_strategy/url_strategy.dart';
 import 'models/login.dart';
 
 void main() {
+  setPathUrlStrategy();
   runApp(
     MultiProvider(
       providers: [
