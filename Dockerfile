@@ -31,8 +31,10 @@ RUN cargo clean
 # build in release mode
 RUN cargo install --path .
 
+RUN ldd /usr/local/cargo/bin/dnd_back
+
 # deployed container
-FROM ubuntu:22.04
+FROM rust:1.62.1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
