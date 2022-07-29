@@ -35,7 +35,10 @@ RUN cargo install --path .
 FROM ubuntu:22.04
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        ca-certificates
+        ca-certificates \
+        pkg-config \
+        libssl-dev
+
 
 COPY --from=build_back /usr/local/cargo/bin/dnd_back /app/
 COPY --from=build_front /build/frontend/dnd_front/build/web /app/static
