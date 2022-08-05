@@ -3,6 +3,7 @@ stages:
   - check_docker_exist
   - build_image
   - push
+  - update_k8s
 
 variables:
   DOCKER_DRIVER: overlay2
@@ -35,3 +36,15 @@ push:
   script:
     - echo $CI_JOB_TOKEN | docker login docker.idiap.ch -u gitlab-ci-token --password-stdin
     - docker push docker.idiap.ch/wenet/dnd-web:latest
+
+update_k8s:
+  tags:
+    - docker
+    - linux
+  stage: update_k8s
+  image: google/cloud-sdk
+  retry: 2
+  script:
+    - mkdir -p $HOME/.kube
+    - echo -n $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - kubectl rollout restart deployment.apps/wenet-dnd-deployment
