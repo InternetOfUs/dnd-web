@@ -8,6 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'models/login.dart';
+import 'package:flutter_web_auth/flutter_web_auth.dart';
+import 'dart:convert' show jsonDecode;
+import 'package:http/http.dart' as http;
+import 'dart:js' as js;
 
 void main() {
   setPathUrlStrategy();
@@ -37,21 +41,33 @@ class MyHome extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('DnD App')),
       body: Center(
-        child: TextFormField(
-          style: textTheme.headline2,
-          decoration: const InputDecoration(
-            border: UnderlineInputBorder(),
-            labelText:
-                'Enter the user id (will be replaced by 0auth2 later...)',
-          ),
-          onFieldSubmitted: (String value) {
-            context.read<LoginModel>().login = value;
-            context.read<RoutinesModel>().fillFromProfileManager(value);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => RoutinePage()),
-            );
-          },
+        child: Column(
+          children: [
+            TextFormField(
+              style: textTheme.headline2,
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText:
+                    'Enter the user id (will be replaced by 0auth2 later...)',
+              ),
+              onFieldSubmitted: (String value) {
+                context.read<LoginModel>().login = value;
+                context.read<RoutinesModel>().fillFromProfileManager(value);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RoutinePage()),
+                );
+              },
+            ),
+            ElevatedButton(
+              child: Text('Auth with wenet-hub'),
+              onPressed: () {
+                js.context.callMethod('open', [
+                  'http://internetofus.u-hopper.com/prod/hub/frontend/oauth/login?client_id=iRagYthYlA'
+                ]);
+              },
+            )
+          ],
         ),
       ),
     );
