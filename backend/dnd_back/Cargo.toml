@@ -16,3 +16,4 @@ reqwest = { version = "^0.11", features = ["json"] }
 sha2 = "^0.10.2"
 regex = "1.6.0"
 flume = "0.10.13"
+actix-session = { version = "0.7.1", features = ["actix", "cookie-session"] }
