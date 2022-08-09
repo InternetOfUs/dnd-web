@@ -543,6 +543,7 @@ async fn get_entries(path: web::Path<(String,)>, req: HttpRequest) -> impl Respo
 #[get("/get_code}")]
 async fn get_code(req: HttpRequest) -> impl Responder {
     // session
+    info!("requested /get_code");
     // TODO change hard-coded
     let counter = 1;
     let page = format!(
