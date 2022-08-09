@@ -1,4 +1,6 @@
 use actix_files as fs;
+use actix_session::{storage::CookieSessionStore, Session, SessionMiddleware};
+use actix_web::http::header::ContentType;
 use actix_web::web::Data;
 use actix_web::{get, middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
 use actix_web::{rt as actix_rt, HttpRequest};
@@ -538,6 +540,29 @@ async fn get_entries(path: web::Path<(String,)>, req: HttpRequest) -> impl Respo
     web::Json(res)
 }
 
+#[get("/get_code}")]
+async fn get_code(req: HttpRequest) -> impl Responder {
+    // session
+    // TODO change hard-coded
+    let counter = 1;
+    let page = format!(
+        "<html>
+    <head><title>redirection</title></head>
+    <body>
+    <p>test {counter} </p>
+    <script>
+        setTimeout(\"location.href = https://lab.idiap.ch/devel/hub/wenet/dnd/';\",1500);
+    </script>
+    </body>
+    </html>"
+    );
+    // set counter to session
+    //let _ = session.insert("counter", counter);
+
+    // response
+    HttpResponse::Ok().content_type("text/html").body(page)
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
@@ -558,6 +583,7 @@ async fn main() -> std::io::Result<()> {
             .service(add_entry)
             .service(get_entries)
             .service(delete_entry)
+            .service(get_code)
             .service(
                 fs::Files::new("/", "./static")
                     .index_file("index.html")
