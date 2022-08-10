@@ -230,6 +230,40 @@ struct OAuth2TokenResponse {
     expires_in: i32,
 }
 
+/// Response for token info
+#[derive(Deserialize)]
+struct OAuth2TokenInfo {
+    profileId: String,
+    appId: String,
+    scopes: Vec<String>,
+}
+
+async fn get_userid_from_token(token: &String) -> Option<String> {
+    let secret = env::var("WENET_SECRET").unwrap_or_default();
+    let url = "https://internetofus.u-hopper.com/prod/api/service/token";
+    let client = reqwest::Client::new();
+    let mut userid: Option<String> = None;
+    let res = client
+        .get(url)
+        .header("x-wenet-component-apikey", secret)
+        .header("Authorization", format!("bearer {token}"))
+        .header("Accept", "application/json")
+        .send()
+        .await;
+    if let Ok(res) = res {
+        let content: Result<OAuth2TokenInfo, _> = res.json().await;
+        if let Ok(content) = content {
+            userid = Some(content.profileId);
+            info!("profileId was retrieved successfuly");
+        } else {
+            warn!("issue when trying to get profileId from OAuth2TokenInfo");
+        }
+    } else {
+        warn!("issue while requesting the profileId");
+    }
+    userid
+}
+
 /// Get all norms for user `userid`
 ///
 /// # Arguments
