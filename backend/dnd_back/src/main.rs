@@ -602,10 +602,13 @@ async fn get_entries(req: HttpRequest) -> impl Responder {
                                 error: Some(DnDError::ProfileManagerTimeout),
                                 content: None,
                             },
-                            _ => Message {
-                                error: Some(DnDError::UnknownError),
-                                content: None,
-                            },
+                            _ => {
+                                warn!("unknown error when /get_entries, got {status}");
+                                Message {
+                                    error: Some(DnDError::UnknownError),
+                                    content: None,
+                                }
+                            }
                         }
                     }
                 }
