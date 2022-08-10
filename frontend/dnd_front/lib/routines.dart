@@ -258,9 +258,6 @@ class RoutinePage extends StatelessWidget {
         body: SingleChildScrollView(
           child: Center(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Consumer<LoginModel>(
-                  builder: (context, loginModel, child) =>
-                      Text(loginModel.login)),
               Consumer2<RoutinesModel, LoginModel>(
                   builder: (context, routinesModels, loginModel, child) =>
                       ListView.builder(
