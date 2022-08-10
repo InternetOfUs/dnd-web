@@ -596,7 +596,7 @@ async fn get_code(code: web::Query<Code>) -> impl Responder {
     if let Ok(res) = res {
         let content: Result<OAuth2TokenResponse, _> = res.json().await;
         if let Ok(content) = content {
-            info!("token was retrieved successfuly {}", content.token_type);
+            info!("token was retrieved successfuly");
         } else {
             warn!("issue when decoding the OAuth2TokenResponse");
         }
