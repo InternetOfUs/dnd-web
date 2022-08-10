@@ -244,7 +244,7 @@ class RoutinesModel extends ChangeNotifier {
   Future<void> fillFromProfileManager(String login) async {
     final Map<String, String> headers = {"token": login};
     final response =
-        await http.get(Uri.parse('${Uri.base}get_entries/'), headers: headers);
+        await http.get(Uri.parse('${Uri.base}get_entries'), headers: headers);
     var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
     if (decodedResponse.containsKey("error") &&
         decodedResponse["error"] != null) {
