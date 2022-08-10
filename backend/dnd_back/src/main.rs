@@ -528,10 +528,13 @@ async fn add_entry(dnd_entry: web::Json<DnDEntryWithToken>) -> impl Responder {
                             error: Some(DnDError::ProfileManagerTimeout),
                             content: None,
                         },
-                        _ => Message {
-                            error: Some(DnDError::ProfileManagerUnableToCreateNorm),
-                            content: None,
-                        },
+                        _ => {
+                            warn!("when trying to creating a norm, got {status}");
+                            Message {
+                                error: Some(DnDError::ProfileManagerUnableToCreateNorm),
+                                content: None,
+                            }
+                        }
                     }
                 }
             }
