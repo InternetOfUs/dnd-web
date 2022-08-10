@@ -99,7 +99,6 @@ impl DnDEntry {
             ),
             thenceforth: "not(send_user_message(_,_))".to_string(),
             ontology: None,
-            priority: None,
         };
         norm.description = Some(format!("DND_{}_{}", norm.compute_id(), self.label));
         norm
@@ -146,8 +145,6 @@ struct Norm {
     thenceforth: String,
     /// Ontology, mostly null
     ontology: Option<String>,
-    /// Priority, mostly null
-    priority: Option<i32>,
 }
 
 impl Norm {
