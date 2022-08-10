@@ -50,6 +50,8 @@ data:
     WENET_BASE_URL: "https://wenet.u-hopper.com/dev/"
     FIREBASE_API_KEY: "REDACTED"
     FIREBASE_URL: "REDACTED"
+    OAUTH2_CLIENT_SECRET: "REDACTED"
+    OAUTH2_CLIENT_ID: "REDACTED"
 kind: ConfigMap
 metadata:
     name: settings-wenet-dnd-env
