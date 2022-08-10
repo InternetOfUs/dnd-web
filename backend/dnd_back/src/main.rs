@@ -16,6 +16,8 @@ use std::{env, vec};
 /// All possible errors
 #[derive(Deserialize, Serialize, Debug)]
 enum DnDError {
+    /// Token wasn't provided
+    TokenNotFound,
     /// Unable to perform the operations (bad auth?)
     OperationNotPermitted,
     /// Timeout when connecting to Profile Manager
@@ -120,16 +122,16 @@ struct PartialProfileForPatch {
 
 /// Norm associated with a user
 #[derive(Deserialize, Clone)]
-struct DnDEntryWitUser {
-    /// User id - owner of the norm
-    userid: String,
+struct DnDEntryWithToken {
+    /// token - owner of the norm
+    token: String,
     /// The norm
     entry: DnDEntry,
 }
 
-impl fmt::Display for DnDEntryWitUser {
+impl fmt::Display for DnDEntryWithToken {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} - {}", self.userid, self.entry)
+        write!(f, "{} - {}", self.token, self.entry)
     }
 }
 
@@ -392,68 +394,13 @@ async fn save_user_action(user_action: UserAction) -> bool {
 }
 
 #[post("/delete_entry")]
-async fn delete_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
+async fn delete_entry(dnd_entry: web::Json<DnDEntryWithToken>) -> impl Responder {
     let entry = &dnd_entry.entry;
-    let userid = &dnd_entry.userid;
-    let res = delete_a_norm(userid, entry).await;
-    let res = match res {
-        Ok(status) => {
-            if status.is_success() {
-                Message {
-                    content: None,
-                    error: None,
-                }
-            } else {
-                match status {
-                    StatusCode::INTERNAL_SERVER_ERROR => Message {
-                        error: Some(DnDError::ProfileManager500),
-                        content: None,
-                    },
-                    StatusCode::NOT_FOUND => Message {
-                        error: Some(DnDError::ProfileManagerUserNotFound),
-                        content: None,
-                    },
-                    StatusCode::GATEWAY_TIMEOUT => Message {
-                        error: Some(DnDError::ProfileManagerTimeout),
-                        content: None,
-                    },
-                    _ => Message {
-                        error: Some(DnDError::ProfileManagerUnableToCreateNorm),
-                        content: None,
-                    },
-                }
-            }
-        }
-        Err(e) => {
-            log::error!("{:?}", e);
-            Message {
-                error: Some(DnDError::ProfileManagerTimeout),
-                content: None,
-            }
-        }
-    };
-    let user_action = UserAction {
-        entry: (*entry).clone(),
-        action: EntryAction::Delete,
-        userid: dnd_entry.userid.clone(),
-        status: format!("{:?}", res),
-    };
-    save_user_action(user_action).await;
-    web::Json(res)
-}
-
-/// add DnDEntry - create a norm
-///
-/// # Arguments
-///
-/// * `entry` - DnDEntry in json
-#[post("/add_entry")]
-async fn add_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
-    let entry = &dnd_entry.entry;
-    println!("received {}", entry);
-    if let Some(old) = entry.old.clone() {
-        let res = delete_a_norm(&dnd_entry.userid, &old).await;
-        let previous_msg = match res {
+    let token = &dnd_entry.token;
+    let userid = get_userid_from_token(token).await;
+    if let Some(userid) = userid {
+        let res = delete_a_norm(&userid, entry).await;
+        let res = match res {
             Ok(status) => {
                 if status.is_success() {
                     Message {
@@ -475,7 +422,7 @@ async fn add_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
                             content: None,
                         },
                         _ => Message {
-                            error: Some(DnDError::ProfileManagerUnableToDeleteNorm),
+                            error: Some(DnDError::ProfileManagerUnableToCreateNorm),
                             content: None,
                         },
                     }
@@ -489,113 +436,200 @@ async fn add_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
                 }
             }
         };
-        if previous_msg.error.is_some() {
-            return web::Json(previous_msg);
-        }
+        let user_action = UserAction {
+            entry: (*entry).clone(),
+            action: EntryAction::Delete,
+            userid: userid,
+            status: format!("{:?}", res),
+        };
+        save_user_action(user_action).await;
+        web::Json(res)
+    } else {
+        web::Json(Message {
+            error: Some(DnDError::OperationNotPermitted),
+            content: None,
+        })
     }
-    let norm = entry.to_norm();
-    let res = send_one_norm(&norm, &dnd_entry.userid).await;
-    let res = match res {
-        Ok(status) => {
-            if status.is_success() {
-                Message {
-                    content: None,
-                    error: None,
+}
+
+/// add DnDEntry - create a norm
+///
+/// # Arguments
+///
+/// * `entry` - DnDEntry in json
+#[post("/add_entry")]
+async fn add_entry(dnd_entry: web::Json<DnDEntryWithToken>) -> impl Responder {
+    let entry = &dnd_entry.entry;
+    let token = dnd_entry.token.clone();
+    let userid = get_userid_from_token(&token).await;
+    if let Some(userid) = userid {
+        if let Some(old) = entry.old.clone() {
+            let res = delete_a_norm(&userid, &old).await;
+            let previous_msg = match res {
+                Ok(status) => {
+                    if status.is_success() {
+                        Message {
+                            content: None,
+                            error: None,
+                        }
+                    } else {
+                        match status {
+                            StatusCode::INTERNAL_SERVER_ERROR => Message {
+                                error: Some(DnDError::ProfileManager500),
+                                content: None,
+                            },
+                            StatusCode::NOT_FOUND => Message {
+                                error: Some(DnDError::ProfileManagerUserNotFound),
+                                content: None,
+                            },
+                            StatusCode::GATEWAY_TIMEOUT => Message {
+                                error: Some(DnDError::ProfileManagerTimeout),
+                                content: None,
+                            },
+                            _ => Message {
+                                error: Some(DnDError::ProfileManagerUnableToDeleteNorm),
+                                content: None,
+                            },
+                        }
+                    }
                 }
-            } else {
-                match status {
-                    StatusCode::INTERNAL_SERVER_ERROR => Message {
-                        error: Some(DnDError::ProfileManager500),
-                        content: None,
-                    },
-                    StatusCode::NOT_FOUND => Message {
-                        error: Some(DnDError::ProfileManagerUserNotFound),
-                        content: None,
-                    },
-                    StatusCode::GATEWAY_TIMEOUT => Message {
+                Err(e) => {
+                    log::error!("{:?}", e);
+                    Message {
                         error: Some(DnDError::ProfileManagerTimeout),
                         content: None,
-                    },
-                    _ => Message {
-                        error: Some(DnDError::ProfileManagerUnableToCreateNorm),
+                    }
+                }
+            };
+            if previous_msg.error.is_some() {
+                return web::Json(previous_msg);
+            }
+        }
+        let norm = entry.to_norm();
+        let res = send_one_norm(&norm, &userid).await;
+        let res = match res {
+            Ok(status) => {
+                if status.is_success() {
+                    Message {
                         content: None,
-                    },
+                        error: None,
+                    }
+                } else {
+                    match status {
+                        StatusCode::INTERNAL_SERVER_ERROR => Message {
+                            error: Some(DnDError::ProfileManager500),
+                            content: None,
+                        },
+                        StatusCode::NOT_FOUND => Message {
+                            error: Some(DnDError::ProfileManagerUserNotFound),
+                            content: None,
+                        },
+                        StatusCode::GATEWAY_TIMEOUT => Message {
+                            error: Some(DnDError::ProfileManagerTimeout),
+                            content: None,
+                        },
+                        _ => Message {
+                            error: Some(DnDError::ProfileManagerUnableToCreateNorm),
+                            content: None,
+                        },
+                    }
                 }
             }
-        }
-        Err(e) => {
-            log::error!("{:?}", e);
-            Message {
-                error: Some(DnDError::ProfileManagerTimeout),
-                content: None,
+            Err(e) => {
+                log::error!("{:?}", e);
+                Message {
+                    error: Some(DnDError::ProfileManagerTimeout),
+                    content: None,
+                }
             }
-        }
-    };
-    let user_action = UserAction {
-        entry: (*entry).clone(),
-        action: EntryAction::Create,
-        userid: dnd_entry.userid.clone(),
-        status: format!("{:?}", res),
-    };
-    save_user_action(user_action).await;
-    web::Json(res)
+        };
+        let user_action = UserAction {
+            entry: (*entry).clone(),
+            action: EntryAction::Create,
+            userid: userid.clone(),
+            status: format!("{:?}", res),
+        };
+        save_user_action(user_action).await;
+        web::Json(res)
+    } else {
+        web::Json(Message {
+            error: Some(DnDError::OperationNotPermitted),
+            content: None,
+        })
+    }
 }
 /// add DnDEntry - create a norm
 ///
 /// # Arguments
 ///
 /// * `entry` - DnDEntry in json
-#[get("/get_entries/{userid}")]
-async fn get_entries(path: web::Path<(String,)>, req: HttpRequest) -> impl Responder {
-    let data = req.app_data::<Data<Sender<String>>>().unwrap();
-    let res = data.send("salut".to_string());
-    info!("{:?}", res);
-    let (userid,) = path.into_inner();
-    let mut norms: Vec<Norm> = vec![];
-    let res = get_all_norms(&userid, &mut norms).await;
-    let res = match res {
-        Ok(status) => {
-            if status.is_success() {
-                let mut entries: Vec<DnDEntry> = vec![];
-                for norm in norms {
-                    if let Some(entry) = norm.to_dnd_entry() {
-                        entries.push(entry);
+#[get("/get_entries")]
+async fn get_entries(req: HttpRequest) -> impl Responder {
+    let token = req.headers().get("token");
+    if let Some(token) = token {
+        let token = token.to_str().unwrap().to_owned();
+        let userid = get_userid_from_token(&token).await;
+        if let Some(userid) = userid {
+            let data = req.app_data::<Data<Sender<String>>>().unwrap();
+            let res = data.send("salut".to_string());
+            info!("{:?}", res);
+            let mut norms: Vec<Norm> = vec![];
+            let res = get_all_norms(&userid, &mut norms).await;
+            let res = match res {
+                Ok(status) => {
+                    if status.is_success() {
+                        let mut entries: Vec<DnDEntry> = vec![];
+                        for norm in norms {
+                            if let Some(entry) = norm.to_dnd_entry() {
+                                entries.push(entry);
+                            }
+                        }
+                        Message {
+                            content: Some(Content::Entries(entries)),
+                            error: None,
+                        }
+                    } else {
+                        match status {
+                            StatusCode::INTERNAL_SERVER_ERROR => Message {
+                                error: Some(DnDError::ProfileManager500),
+                                content: None,
+                            },
+                            StatusCode::NOT_FOUND => Message {
+                                error: Some(DnDError::ProfileManagerUserNotFound),
+                                content: None,
+                            },
+                            StatusCode::GATEWAY_TIMEOUT => Message {
+                                error: Some(DnDError::ProfileManagerTimeout),
+                                content: None,
+                            },
+                            _ => Message {
+                                error: Some(DnDError::UnknownError),
+                                content: None,
+                            },
+                        }
                     }
                 }
-                Message {
-                    content: Some(Content::Entries(entries)),
-                    error: None,
-                }
-            } else {
-                match status {
-                    StatusCode::INTERNAL_SERVER_ERROR => Message {
-                        error: Some(DnDError::ProfileManager500),
-                        content: None,
-                    },
-                    StatusCode::NOT_FOUND => Message {
-                        error: Some(DnDError::ProfileManagerUserNotFound),
-                        content: None,
-                    },
-                    StatusCode::GATEWAY_TIMEOUT => Message {
+                Err(e) => {
+                    log::error!("{:?}", e);
+                    Message {
                         error: Some(DnDError::ProfileManagerTimeout),
                         content: None,
-                    },
-                    _ => Message {
-                        error: Some(DnDError::UnknownError),
-                        content: None,
-                    },
+                    }
                 }
-            }
-        }
-        Err(e) => {
-            log::error!("{:?}", e);
-            Message {
-                error: Some(DnDError::ProfileManagerTimeout),
+            };
+            web::Json(res)
+        } else {
+            web::Json(Message {
+                error: Some(DnDError::OperationNotPermitted),
                 content: None,
-            }
+            })
         }
-    };
-    web::Json(res)
+    } else {
+        web::Json(Message {
+            error: Some(DnDError::TokenNotFound),
+            content: None,
+        })
+    }
 }
 
 #[get("/get_code")]
