@@ -579,7 +579,7 @@ async fn main() -> std::io::Result<()> {
     let data = Data::new(tx_save);
     HttpServer::new(move || {
         App::new()
-            .wrap(Logger::new("%a %{User-Agent}i"))
+            .wrap(Logger::new("%{r}a asks %U"))
             .app_data(Data::clone(&data))
             .service(add_entry)
             .service(get_entries)
