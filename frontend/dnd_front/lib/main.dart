@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
 
 class MyHome extends StatelessWidget {
   Future<String?> getData() {
-    return Future.delayed(Duration(seconds: 2), () {
+    return Future.delayed(Duration(seconds: 1), () {
       return window.localStorage["token"];
       // throw Exception("Custom Error");
     });
