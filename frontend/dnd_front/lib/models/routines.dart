@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 enum DnDError {
+  TokenNotFound,
+
   OperationNotPermitted,
 
   ProfileManagerTimeout,
@@ -198,14 +200,14 @@ class Routine implements Comparable<Routine> {
         _old = routine.old;
 }
 
-class DnDEntryWithUser {
-  final String _userid;
+class DnDEntryWithToken {
+  final String _token;
   final Routine _routine;
 
-  DnDEntryWithUser(this._userid, this._routine);
+  DnDEntryWithToken(this._token, this._routine);
 
   Map<String, dynamic> toJson() => {
-        "userid": _userid,
+        "token": _token,
         "entry": _routine.toJson(),
       };
 }
@@ -239,8 +241,10 @@ class RoutinesModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fillFromProfileManager(login) async {
-    final response = await http.get(Uri.parse('${Uri.base}get_entries/$login'));
+  Future<void> fillFromProfileManager(String login) async {
+    final Map<String, String> headers = {"token": login};
+    final response =
+        await http.get(Uri.parse('${Uri.base}get_entries/'), headers: headers);
     var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
     if (decodedResponse.containsKey("error") &&
         decodedResponse["error"] != null) {
@@ -276,8 +280,8 @@ class RoutinesModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> sendRoutine(Routine routine, String userid) async {
-    var entry = DnDEntryWithUser(userid, routine);
+  Future<void> sendRoutine(Routine routine, String token) async {
+    var entry = DnDEntryWithToken(token, routine);
     final response = await http.post(Uri.parse("${Uri.base}add_entry"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
@@ -294,8 +298,8 @@ class RoutinesModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteRoutine(Routine routine, String userid) async {
-    var entry = DnDEntryWithUser(userid, routine);
+  Future<void> deleteRoutine(Routine routine, String token) async {
+    var entry = DnDEntryWithToken(token, routine);
     final response = await http.post(Uri.parse("${Uri.base}delete_entry"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
@@ -308,7 +312,7 @@ class RoutinesModel extends ChangeNotifier {
     } else {
       routine._routineStatus = RoutineStatus.routineUploaded;
     }
-    await fillFromProfileManager(userid);
+    await fillFromProfileManager(token);
   }
 
   void update() {

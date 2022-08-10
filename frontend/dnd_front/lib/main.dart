@@ -12,6 +12,7 @@ import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'dart:convert' show jsonDecode;
 import 'package:http/http.dart' as http;
 import 'dart:js' as js;
+import 'dart:html';
 
 void main() {
   setPathUrlStrategy();
@@ -35,40 +36,64 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHome extends StatelessWidget {
+  Future<String?> getData() {
+    return Future.delayed(Duration(seconds: 2), () {
+      return window.localStorage["token"];
+      // throw Exception("Custom Error");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(title: const Text('DnD App')),
-      body: Center(
-        child: Column(
-          children: [
-            TextFormField(
-              style: textTheme.headline2,
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText:
-                    'Enter the user id (will be replaced by 0auth2 later...)',
-              ),
-              onFieldSubmitted: (String value) {
-                context.read<LoginModel>().login = value;
-                context.read<RoutinesModel>().fillFromProfileManager(value);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RoutinePage()),
-                );
-              },
+      body: FutureBuilder(
+        builder: (ctx, snapshot) {
+          // Checking if future is resolved or not
+          if (snapshot.connectionState == ConnectionState.done) {
+            // If we got an error
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  '${snapshot.error} occurred',
+                  style: TextStyle(fontSize: 18),
+                ),
+              );
+
+              // if we got our data
+            } else if (snapshot.hasData) {
+              // Extracting data from snapshot object
+              final data = snapshot.data as String;
+              context.read<LoginModel>().login = data;
+              context.read<RoutinesModel>().fillFromProfileManager(data);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RoutinePage()),
+              );
+            }
+          }
+
+          // Displaying LoadingSpinner to indicate waiting state
+          return Center(
+            child: Column(
+              children: [
+                ElevatedButton(
+                  child: Text('Auth with wenet-hub'),
+                  onPressed: () {
+                    js.context.callMethod('open', [
+                      'http://internetofus.u-hopper.com/prod/hub/frontend/oauth/login?client_id=iRagYthYlA'
+                    ]);
+                  },
+                )
+              ],
             ),
-            ElevatedButton(
-              child: Text('Auth with wenet-hub'),
-              onPressed: () {
-                js.context.callMethod('open', [
-                  'http://internetofus.u-hopper.com/prod/hub/frontend/oauth/login?client_id=iRagYthYlA'
-                ]);
-              },
-            )
-          ],
-        ),
+          );
+        },
+
+        // Future that needs to be resolved
+        // inorder to display something on the Canvas
+        future: getData(),
       ),
     );
   }
