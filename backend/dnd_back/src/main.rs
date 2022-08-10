@@ -552,7 +552,7 @@ async fn get_code(req: HttpRequest) -> impl Responder {
     <body>
     <p>test {counter} </p>
     <script>
-        setTimeout(\"location.href = https://lab.idiap.ch/devel/hub/wenet/dnd/';\",1500);
+        setTimeout(\"location.href = 'https://lab.idiap.ch/devel/hub/wenet/dnd/';\",1500);
     </script>
     </body>
     </html>"
