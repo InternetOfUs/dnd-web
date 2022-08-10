@@ -212,6 +212,24 @@ struct Code {
     code: String,
 }
 
+/// Request data for a token
+#[derive(Serialize, Deserialize)]
+struct OAuth2TokenRequest {
+    grant_type: String,
+    client_id: String,
+    client_secret: String,
+    code: String,
+}
+
+/// Response data for a token
+#[derive(Deserialize)]
+struct OAuth2TokenResponse {
+    refresh_token: String,
+    token_type: String,
+    access_token: String,
+    expires_in: i32,
+}
+
 /// Get all norms for user `userid`
 ///
 /// # Arguments
@@ -488,7 +506,6 @@ async fn add_entry(dnd_entry: web::Json<DnDEntryWitUser>) -> impl Responder {
     save_user_action(user_action).await;
     web::Json(res)
 }
-
 /// add DnDEntry - create a norm
 ///
 /// # Arguments
@@ -550,7 +567,43 @@ async fn get_entries(path: web::Path<(String,)>, req: HttpRequest) -> impl Respo
 #[get("/get_code")]
 async fn get_code(code: web::Query<Code>) -> impl Responder {
     // session
-    info!("requested /get_code with code {}", code.code);
+    let code = code.code.clone();
+    info!("requested /get_code with code {}", code);
+
+    let secret = env::var("WENET_SECRET").unwrap_or_default();
+    let client_id = env::var("OAUTH2_CLIENT_ID").unwrap_or_default();
+    let client_secret = env::var("OAUTH2_CLIENT_SECRET").unwrap_or_default();
+    let grant_type = "authorization_code".to_owned();
+
+    let oauth2_request = OAuth2TokenRequest {
+        client_id: client_id,
+        client_secret: client_secret,
+        code: code,
+        grant_type: grant_type,
+    };
+
+    let url = "https://internetofus.u-hopper.com/prod/api/oauth2/token";
+    let client = reqwest::Client::new();
+    let res = client
+        .post(url)
+        .header("x-wenet-component-apikey", secret)
+        .header("Authorization", "test:wenet")
+        .header("Content-Type", "application/json")
+        .header("Accept", "application/json")
+        .json(&oauth2_request)
+        .send()
+        .await;
+    if let Ok(res) = res {
+        let content: Result<OAuth2TokenResponse, _> = res.json().await;
+        if let Ok(content) = content {
+            info!("token was retrieved successfuly {}", content.token_type);
+        } else {
+            warn!("issue when decoding the OAuth2TokenResponse");
+        }
+    } else {
+        warn!("issue while requesting the token");
+    }
+
     // TODO change hard-coded
     let counter = 1;
     let page = format!(
