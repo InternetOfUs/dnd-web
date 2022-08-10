@@ -205,6 +205,13 @@ impl fmt::Display for Norm {
     }
 }
 
+/// Struct for callback code parameter from oauth2
+#[derive(Deserialize)]
+struct Code {
+    /// code from oauth2 server
+    code: String,
+}
+
 /// Get all norms for user `userid`
 ///
 /// # Arguments
@@ -541,9 +548,9 @@ async fn get_entries(path: web::Path<(String,)>, req: HttpRequest) -> impl Respo
 }
 
 #[get("/get_code")]
-async fn get_code(req: HttpRequest) -> impl Responder {
+async fn get_code(code: web::Query<Code>) -> impl Responder {
     // session
-    info!("requested /get_code");
+    info!("requested /get_code with code {}", code.code);
     // TODO change hard-coded
     let counter = 1;
     let page = format!(
