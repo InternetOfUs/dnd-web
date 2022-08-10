@@ -574,7 +574,7 @@ async fn get_code(code: web::Query<Code>) -> impl Responder {
     let client_id = env::var("OAUTH2_CLIENT_ID").unwrap_or_default();
     let client_secret = env::var("OAUTH2_CLIENT_SECRET").unwrap_or_default();
     let grant_type = "authorization_code".to_owned();
-
+    let mut access_token = "".to_owned();
     let oauth2_request = OAuth2TokenRequest {
         client_id: client_id,
         client_secret: client_secret,
@@ -596,6 +596,7 @@ async fn get_code(code: web::Query<Code>) -> impl Responder {
     if let Ok(res) = res {
         let content: Result<OAuth2TokenResponse, _> = res.json().await;
         if let Ok(content) = content {
+            access_token = content.access_token;
             info!("token was retrieved successfuly");
         } else {
             warn!("issue when decoding the OAuth2TokenResponse");
@@ -612,10 +613,12 @@ async fn get_code(code: web::Query<Code>) -> impl Responder {
     <body>
     <p>test {counter} </p>
     <script>
+        localStorage.setItem('token', '{}');
         setTimeout(\"location.href = 'https://lab.idiap.ch/devel/hub/wenet/dnd/';\",1500);
     </script>
     </body>
-    </html>"
+    </html>",
+        access_token
     );
     // set counter to session
     //let _ = session.insert("counter", counter);
