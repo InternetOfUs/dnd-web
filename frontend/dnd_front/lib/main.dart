@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui' as ui;
+
 import 'package:dnd_front/models/routines.dart';
 import 'package:dnd_front/routines.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +33,17 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: MyHome());
+    return MaterialApp(
+      home: MyHome(),
+      scrollBehavior: MaterialScrollBehavior().copyWith(
+        dragDevices: {
+          ui.PointerDeviceKind.mouse,
+          ui.PointerDeviceKind.touch,
+          ui.PointerDeviceKind.stylus,
+          ui.PointerDeviceKind.unknown
+        },
+      ),
+    );
   }
 }
 
