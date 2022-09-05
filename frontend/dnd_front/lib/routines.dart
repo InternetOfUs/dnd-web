@@ -256,6 +256,8 @@ class RoutinePage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(title: const Text('Routines')),
         body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
           child: SingleChildScrollView(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               Consumer2<RoutinesModel, LoginModel>(
