@@ -256,22 +256,20 @@ class RoutinePage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(title: const Text('Routines')),
         body: SingleChildScrollView(
-          child: Center(
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Consumer2<RoutinesModel, LoginModel>(
-                  builder: (context, routinesModels, loginModel, child) =>
-                      ListView.builder(
-                        itemCount: routinesModels.routines.length,
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          var item = routinesModels.routines[index];
-                          return buildRoutine(context, item, index,
-                              routinesModels, loginModel.login);
-                        },
-                      )),
-            ]),
-          ),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Consumer2<RoutinesModel, LoginModel>(
+                builder: (context, routinesModels, loginModel, child) =>
+                    ListView.builder(
+                      itemCount: routinesModels.routines.length,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        var item = routinesModels.routines[index];
+                        return buildRoutine(context, item, index,
+                            routinesModels, loginModel.login);
+                      },
+                    )),
+          ]),
         ));
   }
 }
