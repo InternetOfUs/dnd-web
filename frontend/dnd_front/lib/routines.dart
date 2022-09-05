@@ -123,7 +123,7 @@ class RoutinePage extends StatelessWidget {
                       const SizedBox(width: 20.0),
                       const SizedBox(width: 60.0, child: Text("From: ")),
                       SizedBox(
-                        width: 100.0,
+                        width: MediaQuery.of(context).size.width / 200,
                         child: TextField(
                           controller: txtFrom,
                           onTap: () async {
@@ -155,7 +155,7 @@ class RoutinePage extends StatelessWidget {
                       const SizedBox(width: 20.0),
                       const SizedBox(width: 30.0, child: Text("To: ")),
                       SizedBox(
-                        width: 100.0,
+                        width: MediaQuery.of(context).size.width / 200,
                         child: TextField(
                           controller: txtTo,
                           onTap: () async {
