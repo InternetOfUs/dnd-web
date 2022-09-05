@@ -676,13 +676,12 @@ async fn get_code(code: web::Query<Code>) -> impl Responder {
         warn!("issue while requesting the token");
     }
 
-    // TODO change hard-coded
-    let counter = 1;
     let page = format!(
         "<html>
     <head><title>redirection</title></head>
     <body>
-    <p>test {counter} </p>
+    <p>You will be redicted soon...</p>
+    <p>If this doesn't work, click <a href=\"https://lab.idiap.ch/devel/hub/wenet/dnd/\">here</a></p>
     <script>
         localStorage.setItem('token', '{}');
         setTimeout(\"location.href = 'https://lab.idiap.ch/devel/hub/wenet/dnd/';\",1500);
