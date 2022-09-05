@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:ui' as ui;
-
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:dnd_front/models/routines.dart';
 import 'package:dnd_front/routines.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +34,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: (context, child) => ResponsiveWrapper.builder(child,
+          maxWidth: 1200,
+          minWidth: 480,
+          defaultScale: true,
+          breakpoints: [
+            ResponsiveBreakpoint.resize(480, name: MOBILE),
+            ResponsiveBreakpoint.autoScale(800, name: TABLET),
+            ResponsiveBreakpoint.resize(1000, name: DESKTOP),
+          ],
+          background: Container(color: Color(0xFFF5F5F5))),
       home: MyHome(),
       scrollBehavior: MaterialScrollBehavior().copyWith(
         dragDevices: {
