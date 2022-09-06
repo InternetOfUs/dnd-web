@@ -27,7 +27,7 @@
     }
   ],
   "name": "dnd_front",
-  "orientation": "portrait-primary",
+  "orientation": "landscape-primary",
   "prefer_related_applications": false,
   "short_name": "dnd_front",
   "start_url": ".",
