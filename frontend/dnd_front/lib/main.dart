@@ -100,6 +100,13 @@ class MyHome extends StatelessWidget {
           return Center(
             child: Column(
               children: [
+                OutlinedButton(
+                  onPressed: () {
+                    js.context.callMethod('open',
+                        ['https://www.youtube.com/watch?v=1WDyRU0qeG0']);
+                  },
+                  child: const Text('watch the tutorial'),
+                ),
                 ElevatedButton(
                   child: Text('Auth with wenet-hub'),
                   onPressed: () {
