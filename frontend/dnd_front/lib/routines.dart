@@ -255,8 +255,10 @@ class RoutinePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text('Routines')),
-        body: SingleChildScrollView(
-          child: Center(
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: SingleChildScrollView(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               Consumer2<RoutinesModel, LoginModel>(
                   builder: (context, routinesModels, loginModel, child) =>
@@ -264,6 +266,7 @@ class RoutinePage extends StatelessWidget {
                         itemCount: routinesModels.routines.length,
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
+                        physics: ScrollPhysics(),
                         itemBuilder: (context, index) {
                           var item = routinesModels.routines[index];
                           return buildRoutine(context, item, index,
