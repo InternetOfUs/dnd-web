@@ -1,5 +1,9 @@
 import 'dart:convert';
+import 'dart:html';
+import 'package:dnd_front/routines.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 enum DnDError {
@@ -241,13 +245,16 @@ class RoutinesModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fillFromProfileManager(String login) async {
+  Future<void> fillFromProfileManager(
+      String login, BuildContext? context) async {
     final Map<String, String> headers = {"token": login};
     final response =
         await http.get(Uri.parse('${Uri.base}get_entries'), headers: headers);
     var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
     if (decodedResponse.containsKey("error") &&
         decodedResponse["error"] != null) {
+      window.localStorage.clear();
+      return;
       // TODO manager error
     } else if (decodedResponse.containsKey("content") &&
         decodedResponse["content"] != null) {
@@ -264,6 +271,12 @@ class RoutinesModel extends ChangeNotifier {
       }
       _routines.sort();
       retreiveLabels();
+      if (context != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RoutinePage()),
+        );
+      }
     }
   }
 
@@ -312,7 +325,7 @@ class RoutinesModel extends ChangeNotifier {
     } else {
       routine._routineStatus = RoutineStatus.routineUploaded;
     }
-    await fillFromProfileManager(token);
+    await fillFromProfileManager(token, null);
   }
 
   void update() {

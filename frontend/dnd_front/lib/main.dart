@@ -78,11 +78,13 @@ class MyHome extends StatelessWidget {
               // Extracting data from snapshot object
               final data = snapshot.data as String;
               context.read<LoginModel>().login = data;
-              context.read<RoutinesModel>().fillFromProfileManager(data);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => RoutinePage()),
-              );
+              context
+                  .read<RoutinesModel>()
+                  .fillFromProfileManager(data, context);
+              //Navigator.push(
+              //  context,
+              //  MaterialPageRoute(builder: (context) => RoutinePage()),
+              //);
             }
           }
 
