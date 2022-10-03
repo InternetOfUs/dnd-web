@@ -11,9 +11,6 @@ WORKDIR /build/frontend/dnd_front/
 # clean, useful when non-ci building of the container
 RUN flutter clean
 
-# build only if tests pass
-RUN flutter test
-
 # build web (static html, css and JS)
 RUN flutter build web --release --base-href "/devel/hub/wenet/dnd/"
 
