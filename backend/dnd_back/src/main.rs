@@ -4,6 +4,7 @@ use actix_web::http::header::ContentType;
 use actix_web::web::Data;
 use actix_web::{get, middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
 use actix_web::{rt as actix_rt, HttpRequest};
+use chrono::Utc;
 use dotenvy::dotenv;
 use flume::{self, Sender};
 use log::{self, info, warn};
@@ -70,6 +71,17 @@ struct UserAction {
     action: EntryAction,
     /// status of the action
     status: String,
+}
+
+/// User login, mean for recording
+#[derive(Deserialize, Serialize)]
+struct UserLogin {
+    /// userid of the user
+    userid: String,
+    /// status of the auth.
+    status: String,
+    /// datetime of login
+    datetime: String,
 }
 
 /// One DnDEntry of the user (TODO change name)
@@ -390,6 +402,34 @@ async fn save_user_action(user_action: UserAction) -> bool {
     }
 }
 
+async fn save_login_info(userid: String, status: String) -> bool {
+    let now = Utc::now();
+    let now_str = now.to_rfc3339();
+    let user_login = UserLogin {
+        userid: userid,
+        status: status,
+        datetime: now_str,
+    };
+    if let Ok(url) = env::var("FIREBASE_URL") {
+        let url = format!("{url}login_list.json");
+        let client = reqwest::Client::new();
+        let res = client
+            .post(&url)
+            .header("Content-Type", "application/json")
+            .header("Accept", "application/json")
+            .json(&user_login)
+            .send()
+            .await;
+        if let Ok(_) = res {
+            true
+        } else {
+            false
+        }
+    } else {
+        false
+    }
+}
+
 #[post("/delete_entry")]
 async fn delete_entry(dnd_entry: web::Json<DnDEntryWithToken>) -> impl Responder {
     let entry = &dnd_entry.entry;
@@ -669,6 +709,10 @@ async fn get_code(code: web::Query<Code>) -> impl Responder {
         if let Ok(content) = content {
             access_token = content.access_token;
             info!("token was retrieved successfuly");
+            let userid = get_userid_from_token(&access_token).await;
+            if let Some(userid) = userid {
+                save_login_info(userid, "success".to_string());
+            }
         } else {
             warn!("issue when decoding the OAuth2TokenResponse");
         }
