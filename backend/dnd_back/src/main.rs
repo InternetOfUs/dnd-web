@@ -71,6 +71,8 @@ struct UserAction {
     action: EntryAction,
     /// status of the action
     status: String,
+    /// datetime of the action
+    datetime: Option<String>,
 }
 
 /// User login, mean for recording
@@ -382,6 +384,15 @@ async fn send_one_norm(norm: &Norm, userid: &str) -> Result<StatusCode, reqwest:
 }
 
 async fn save_user_action(user_action: UserAction) -> bool {
+    let now = Utc::now();
+    let now_str = now.to_rfc3339();
+    let user_action = UserAction {
+        entry: user_action.entry,
+        action: user_action.action,
+        userid: user_action.userid,
+        status: user_action.status,
+        datetime: Some(now_str),
+    };
     if let Ok(url) = env::var("FIREBASE_URL") {
         let url = format!("{url}action_list.json");
         let client = reqwest::Client::new();
@@ -478,6 +489,7 @@ async fn delete_entry(dnd_entry: web::Json<DnDEntryWithToken>) -> impl Responder
             action: EntryAction::Delete,
             userid: userid,
             status: format!("{:?}", res),
+            datetime: None,
         };
         save_user_action(user_action).await;
         web::Json(res)
@@ -588,6 +600,7 @@ async fn add_entry(dnd_entry: web::Json<DnDEntryWithToken>) -> impl Responder {
             action: EntryAction::Create,
             userid: userid.clone(),
             status: format!("{:?}", res),
+            datetime: None,
         };
         save_user_action(user_action).await;
         web::Json(res)
