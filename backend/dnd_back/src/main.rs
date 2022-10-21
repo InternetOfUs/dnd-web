@@ -711,7 +711,7 @@ async fn get_code(code: web::Query<Code>) -> impl Responder {
             info!("token was retrieved successfuly");
             let userid = get_userid_from_token(&access_token).await;
             if let Some(userid) = userid {
-                save_login_info(userid, "success".to_string());
+                save_login_info(userid, "success".to_string()).await;
             }
         } else {
             warn!("issue when decoding the OAuth2TokenResponse");
