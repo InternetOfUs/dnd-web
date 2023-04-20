@@ -16,7 +16,10 @@ RUN flutter build web --release --base-href "/devel/hub/wenet/dnd/"
 
 # build the backend
 # use custom image for static build with musls
-FROM rust:1.62.1 as build_back
+FROM rust:1.63.0 as build_back
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        git
 
 COPY backend /build/backend/
 
@@ -31,7 +34,7 @@ RUN cargo install --path .
 RUN ldd /usr/local/cargo/bin/dnd_back
 
 # deployed container
-FROM rust:1.62.1
+FROM rust:1.63.0
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
